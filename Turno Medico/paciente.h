@@ -101,7 +101,6 @@ void cargarPaciente(Paciente p[], int *carga,int c){
     }
     for(i=0;i<c;i++){ //Control de que el DNI sea unico
         if(p[i].dni == Temp){
-            printf("%d\n", p[i].dni);
             printf("El DNI ingresado ya esta registrado. Por favor ingrese el DNI correctamente.\n");
             scanf("%d", &Temp);
             while(Temp == p[i].dni || Temp < 0 || Temp > 99999999){
