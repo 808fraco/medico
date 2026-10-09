@@ -11,6 +11,7 @@ typedef struct{
     int dni;
     int osocial; //1. si tiene | 0. no tiene
 }Paciente;
+
 void mostrarPaciente(Paciente p[], int carga){
     int i;
     for(i=0;i<carga;i++){
@@ -19,29 +20,30 @@ void mostrarPaciente(Paciente p[], int carga){
         printf("Nombre: %s", p[i].nombre);
         printf("Apellido: %s", p[i].apellido);
         printf("DNI: %d\n", p[i].dni);
-        if(p[i].osocial = 1){
+        if(p[i].osocial == 1){
             printf("Obra social: si");
         }else{
             printf("Obra social: no");
         }
     }
 }
-void modPaciente(Paciente p[], int n,int opcion){
+void modPaciente(Paciente p[], int n,int opcion, int carga){
     int i,Temp;
+    printf("paso %d\n", n);
     switch(opcion){
-    // si quiere modificar el nombre completo
+    //! si quiere modificar el nombre completo
     case 1:
     printf("Nombre?\n");
     fgets(p[n].nombre, 30, stdin);
     break;
 
-    // si quiere modificar el apellido
+    //! si quiere modificar el apellido
     case 2:
     printf("Apellido?\n");
     fgets(p[n].apellido, 30, stdin);
     break;
 
-    // si quiere modificar el DNI (con controles)
+    //! si quiere modificar el DNI (con controles)
     case 3:
     printf("DNI?\n");
     scanf("%d", &Temp);
@@ -50,7 +52,7 @@ void modPaciente(Paciente p[], int n,int opcion){
         printf("Numero de DNI fuera de rango, ingrese uno correctamente\n");
         scanf("%d", &Temp);
     }
-    for(i=0;i<MAX;i++){ //Control de que el DNI sea unico
+    for(i=0;i<carga;i++){ //Control de que el DNI sea unico
         if(p[i].dni == Temp){
             printf("El DNI ingresado ya esta registrado. Por favor ingrese el DNI correctamente.\n");
             scanf("%d", &Temp);
@@ -69,7 +71,7 @@ void modPaciente(Paciente p[], int n,int opcion){
     getchar();
     break;
 
-    //si quiere modificar si tiene obra social o no
+    //!si quiere modificar si tiene obra social o no
     case 4:
     printf("Tiene obra social el paciente? Indique segun las opciones.\n");
     printf("[1. Si | 0. No]");
@@ -83,6 +85,10 @@ void modPaciente(Paciente p[], int n,int opcion){
 }
 void cargarPaciente(Paciente p[], int *carga,int c){
     int i, Temp; //! Temp es usado para el control de DNI y obra social.
+    if(*carga>=MAX){
+        printf("Se llego al limite de carga de pacientes.\n");
+        return;
+    }
     printf("Paciente #%i\n", *carga + 1);
     //! Nombre y apellido
     printf("Nombre?\n");
