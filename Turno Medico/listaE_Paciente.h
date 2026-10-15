@@ -23,7 +23,7 @@ int isFull(LPaciente p){
 }
 
 int isOos(LPaciente p){
-    return(p.cursor == -1);
+    return(p.cursor == -1 ||p.cursor > p.ultimo);
 }
 void reset(LPaciente *p){
     if(isEmpty(*p)){
@@ -34,18 +34,11 @@ void reset(LPaciente *p){
 }
 
 void forwards(LPaciente *p){
-    if(!isOos(*p)){
-        if(p->cursor < p->ultimo){
-            p->cursor++;
-        }else{
-            p->cursor = -1;
-        }
-    }
+    p->cursor++;
 }
 
 Paciente copy(LPaciente p){
     if(isOos(p)){
-        printf("Error: Intento de copia con cursor fuera de estructura.\n");
         exit(1);
     }
     return p.vipd[p.cursor];
@@ -54,16 +47,16 @@ Paciente copy(LPaciente p){
 void insert(LPaciente *p, Paciente elem){
     int i;
     if(isFull(*p)){
-        printf("Error de Desborde: La lista está llena.\n");
         return;
     }
-    if(isEmpty(*p) || isOos(*p)){
+    if(isEmpty(*p)){
+         p->cursor =0;
         p->ultimo++;
-        p->vipd[p->ultimo] = elem;
-        p->cursor = p->ultimo;
+        p->vipd[p->cursor] = elem;
+
     }else{
-        for(i=p->ultimo; i>=p->cursor; i--){
-            p->vipd[i+1] = p->vipd[i];
+        for(i=p->ultimo+1; i>p->cursor; i--){
+            p->vipd[i] = p->vipd[i-1];
         }
         p->vipd[p->cursor] = elem;
         p->ultimo++;
@@ -71,7 +64,6 @@ void insert(LPaciente *p, Paciente elem){
 }
 void supress(LPaciente *p){
     if(isOos(*p) || isEmpty(*p)){
-        printf("Error de Desfonde/OOS: No hay elemento corriente para suprimir.\n");
         return;
     }
     int i;
@@ -80,11 +72,7 @@ void supress(LPaciente *p){
     }
     p->ultimo--;
     if(p->ultimo == -1){
-        p->cursor = -1;
-    }else if(p->cursor > p->ultimo){
-        p->cursor = p->ultimo;
+        p->cursor = -1;// En el caso de que se elemine el primer elemento
     }
 }
-
-
 #endif // LISTAESTATICA_H_INCLUDED
