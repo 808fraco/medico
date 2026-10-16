@@ -38,7 +38,7 @@ void forwards(LPaciente *p){
 }
 
 Paciente copy(LPaciente p){
-    if(isOos(p)){
+    if(isOos(p)){ //Control dentro del main
         exit(1);
     }
     return p.vipd[p.cursor];
@@ -46,7 +46,7 @@ Paciente copy(LPaciente p){
 
 void insert(LPaciente *p, Paciente elem){
     int i;
-    if(isFull(*p)){
+    if(isFull(*p)){ //Control dentro del main
         return;
     }
     if(isEmpty(*p)){
@@ -65,7 +65,7 @@ void insert(LPaciente *p, Paciente elem){
 void supress(LPaciente *p){
     if(isOos(*p) || isEmpty(*p)){
         return;
-    }
+    } //Control dentro del main
     int i;
     for(i=p->cursor;i<p->ultimo;i++){
         p->vipd[i] = p->vipd[i+1];
