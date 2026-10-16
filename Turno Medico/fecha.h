@@ -19,11 +19,9 @@ typedef struct{
 // FUNCION AUXILIAR: IDENTIFICA EL MES Y RETORNA LA CANTIDAD DE DIAS QUE TIENE ESE MES EN 2026.
 int diaEnMes(int mes){
     switch(mes){
-        case 2: // CASO DE FEBRERO, RETORNA 28 DIAS.
-            return 28;
-        case 4: case 6: case 9: case 11: // CASOS DE MESES CON 30 DIAS.
+        case 11: // CASO DE NOVIEMBRE, DEVUELVE 30 DIAS.
             return 30;
-        default:// CASO DEFAULT, RETORNA 31 DIAS.
+        case 12:// CASO DE DICIEMBRE, DEVUELVE 31 DIAS.
             return 31;
     }
 }
@@ -120,48 +118,4 @@ Fecha creaFecha(int d, int m, int h, int min, int disp){
     return f;
 }
 
-//! Todo esto de abajo no es necesario pq el control de fechas se hace en el main y por id_fecha
-// COMPARACION DE FECHAS CRONOLOGICAMENTE:
-// RETORNA NEGATIVO SI f1 < f2, CERO SI SON IGUALES, POSITIVO SI f1 > f2.
-int compararFechas(Fecha f1, Fecha f2){
-    if (f1.anio!=f2.anio)       return f1.anio-f2.anio;
-    if (f1.mes!=f2.mes)         return f1.mes-f2.mes;
-    if (f1.dia!=f2.dia)         return f1.dia-f2.dia;
-    if (f1.hora!=f2.hora)       return f1.hora-f2.hora;
-    return f1.minuto-f2.minuto;
-}
-
-// RETORNA EL DIA DE LA SEMANA: (0=DOMINGO, 1=LUNES, 2=MARTES, 3=MIERCOLES, 4=JUEVES, 5=VIERNES, 6=SABADO).
-// SE CALCULA SABIENDO QUE EL 01/01/2026 FUE JUEVES (DIA 4).
-int diaSemana(Fecha f){
-    int diaDelAnio=f.dia;
-    int m;
-//SUMA TODOS LOS DIAS DE LOS MESES ANTERIORES EN 2026
-    for (m=1;m<f.mes;m++){
-        diaDelAnio+=diaEnMes(m);
-        }
-//FORMULA: (DIAS+3)%7
-    return (diaDelAnio+3)%7;
-}
-
-// RETORNA 1 SI ES DE LUNES A VIERNES, 0 SI ES FIN DE SEMANA.
-int esDiaHabil(Fecha f){
-    int ds=diaSemana(f);
-    if (ds>=1&&ds<=5){
-        return 1;
-        }
-    return 0;
-}
-// RETORNA 1 SI LA FECHA ES FERIADO, 0 SI NO LO ES.
-int esFeriado(Fecha f){
-    int feriados[5][2]={ {9,11}, {23,11}, {7,12}, {8,12}, {25,12} };// FERIADOS CON FORMATO ( {DIA, MES} ).
-    int n=5; // CANTIDAD DE FERIADOS
-    int i;
-    for (i = 0; i < n; i++){
-        if (f.dia==feriados[i][0] && f.mes==feriados[i][1]){
-            return 1;
-        }
-    }
-    return 0;
-}
 #endif
