@@ -120,7 +120,7 @@ Fecha creaFecha(int d, int m, int h, int min, int disp){
     return f;
 }
 
-
+//! Todo esto de abajo no es necesario pq el control de fechas se hace en el main y por id_fecha
 // COMPARACION DE FECHAS CRONOLOGICAMENTE:
 // RETORNA NEGATIVO SI f1 < f2, CERO SI SON IGUALES, POSITIVO SI f1 > f2.
 int compararFechas(Fecha f1, Fecha f2){
