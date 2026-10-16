@@ -15,18 +15,6 @@ typedef struct{
     int disponible; // (LIBRE=1, OCUPADO=0)
 }Fecha;
 
-
-// FUNCION AUXILIAR: IDENTIFICA EL MES Y RETORNA LA CANTIDAD DE DIAS QUE TIENE ESE MES EN 2026.
-int diaEnMes(int mes){
-    switch(mes){
-        case 11: // CASO DE NOVIEMBRE, DEVUELVE 30 DIAS.
-            return 30;
-        case 12:// CASO DE DICIEMBRE, DEVUELVE 31 DIAS.
-            return 31;
-    }
-}
-
-
 // INICIALIZACION: INICIALIZA LA FECHA CON VALORES POR DEFECTO (01/01/2026, 08:00HS, LIBRE).
 void initFecha(Fecha *f){
     (*f).dia=1;
