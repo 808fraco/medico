@@ -56,13 +56,13 @@ void insertL(Lista *l, Turno elem){
         return;
     }else{
         n->vipd = elem; //guarda el elemento dentro del nodo
-        n->siguiente = l->cursor; //engancha el nuevo nodo hacia adelante
+        n->siguiente = l->cursor; //engancha el nuevo nodo al siguiente nodo donde apunta cursor 
         if(l->aux == NULL){ //insertamos al inicio si esta vacia
             l->acceso = n;
-        }else if(l->aux != NULL){ //insertamos en el medio o al final, y hacemos que el siguiente del anterior, apunte a n
+        }else if(l->aux != NULL){ //insertamos en el medio o al final. Hacemos que el siguiente nodo del auxiliar, apunte a n
             l->aux->siguiente = n;
         }
-        l->cursor = n;
+        l->cursor = n; // el cursor apunta al nuevo nodo
     }
 }
 
