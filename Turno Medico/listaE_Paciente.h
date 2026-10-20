@@ -1,7 +1,7 @@
 #ifndef LISTAESTATICA_H_INCLUDED
 #define LISTAESTATICA_H_INCLUDED
 #include "paciente.h"
-#define MAX 30
+#define MAX 100
 typedef struct{
     Paciente vipd[MAX];
     int cursor;
@@ -38,19 +38,13 @@ void forwards(LPaciente *p){
 }
 
 Paciente copy(LPaciente p){
-    if(isOos(p)){ //Control dentro del main
-        exit(1);
-    }
     return p.vipd[p.cursor];
 }
 
 void insert(LPaciente *p, Paciente elem){
     int i;
-    if(isFull(*p)){ //Control dentro del main
-        return;
-    }
     if(isEmpty(*p)){
-         p->cursor =0;
+        p->cursor =0;
         p->ultimo++;
         p->vipd[p->cursor] = elem;
 
@@ -63,9 +57,6 @@ void insert(LPaciente *p, Paciente elem){
     }
 }
 void supress(LPaciente *p){
-    if(isOos(*p) || isEmpty(*p)){
-        return;
-    } //Control dentro del main
     int i;
     for(i=p->cursor;i<p->ultimo;i++){
         p->vipd[i] = p->vipd[i+1];
