@@ -4,7 +4,7 @@
 #include <string.h>
 #include "fecha.h"
 
-#define MAX_MUTUAL 30
+#define MAX_MUTUAL 100
 
 // Estados del turno
 #define SOLICITADO 1
@@ -70,8 +70,15 @@ float getMontoTurno(Turno t) {
     return t.monto;
 }
 
-void getMutualTurno(Turno t, char mut[]) {
-    strcpy(mut, t.mutual);
+char* getMutualTurno(Turno t) {
+    char *m;
+    m = (char*)malloc(strlen(t.mutual)+1);
+    if(m==NULL){
+        return;
+    }else{
+        strcpy(m,t.mutual);
+        return m;
+    }
 }
 
 Fecha getFechaTurno(Turno t) {
@@ -87,29 +94,5 @@ Turno getTurno(Turno t) {
     return t;
 }
 
-// Devuelve el nombre del estado del turno
-void obtenerNombreEstado(int estado, char desc[]) {
-    switch (estado) {
-        case SOLICITADO:
-            strcpy(desc, "SOLICITADO");
-            break;
-
-        case CONFIRMADO:
-            strcpy(desc, "CONFIRMADO");
-            break;
-
-        case ATENDIDO:
-            strcpy(desc, "ATENDIDO");
-            break;
-
-        case CANCELADO:
-            strcpy(desc, "CANCELADO");
-            break;
-
-        default:
-            strcpy(desc, "DESCONOCIDO");
-            break;
-    }
-}
 
 #endif
