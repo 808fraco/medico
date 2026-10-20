@@ -57,19 +57,6 @@ void setEstadoTurno(Turno *t, int estado) {
     (*t).estado = estado;
 }
 
-// Modifica los datos del turno
-void modificarEstadoTurno(Turno *t, int nuevo_estado) {
-    (*t).estado = nuevo_estado;
-}
-
-void modificarMontoTurno(Turno *t, float nuevo_monto) {
-    (*t).monto = nuevo_monto;
-}
-
-void modificarMutualTurno(Turno *t, char nueva_mutual[]) {
-    strcpy((*t).mutual, nueva_mutual);
-}
-
 // Devuelve los datos del turno
 int getIdTurno(Turno t) {
     return t.id_turno;
