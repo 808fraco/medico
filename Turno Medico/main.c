@@ -18,7 +18,7 @@ int compararFechas(Fecha f1, Fecha f2){
 // Devuelve los días de cualquier mes del año 2026 (año no bisiesto)
 int diaEnMes(int mes){
     switch(mes){
-        case 2: 
+        case 2:
             return 28; // Febrero 2026
         case 4: case 6: case 9: case 11:
             return 30; // Meses de 30 días
@@ -62,6 +62,18 @@ Turno cargaTurno(Turno aux){
     return aux; // Se agregó el return
 }
 
+    int esFeriado(Fecha f){
+    int feriados[5][2]={ {9,11}, {23,11}, {7,12}, {8,12}, {25,12} };// FERIADOS CON FORMATO ( {DIA, MES} ).
+    int n=5; // CANTIDAD DE FERIADOS
+    int i;
+    for (i = 0; i < n; i++){
+        if (f.dia==feriados[i][0] && f.mes==feriados[i][1]){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void inicializarAgenda(Fecha agenda[]){
     int pos = 0;
     int mes, dia, hora, min;
@@ -69,15 +81,22 @@ void inicializarAgenda(Fecha agenda[]){
     // Bucle principal de meses
     for(mes = 11; mes <= 12; mes++){
         int max_dias = (mes == 11) ? 30 : 31; // Se calcula dentro del bucle
-        
+
         for (dia = 1; dia <= max_dias; dia++){
             Fecha f_prueba = creaFecha(dia, mes, 8, 0, LIBRE);
-            
-            if (esDiaHabil(f_prueba)){
+            if(esFeriado(f_prueba)){
+                continue;
+            }
+            if (!esDiaHabil(f_prueba)){
+                continue;
+            }
+            if (esDiaHabil(f_prueba)|| !esFeriado(f_prueba)){
                 for(hora = 8; hora < 13; hora++){
                     for(min = 0; min <= 30; min += 30){
+                        if (pos<390){
                         agenda[pos] = creaFecha(dia, mes, hora, min, LIBRE);
                         pos++;
+                        }
                     }
                 }
             }
@@ -88,7 +107,7 @@ void inicializarAgenda(Fecha agenda[]){
 int main(){
     Fecha agenda[390];
     inicializarAgenda(agenda);
-    
+
     int i;
     for(i = 0; i < 390; i++){
         Fecha aux = agenda[i];
@@ -96,8 +115,7 @@ int main(){
         printf("Turno ID #%d -> ", i);
         mostrarFecha(aux);
     }
-    
+
     return 0;
 }
-
 
