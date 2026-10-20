@@ -77,6 +77,6 @@ void supressL(Lista *l){
     }
 
     l->cursor = temp->siguiente; // el cursor pasara a valer el nodo siguiente del nodo borrado
-    free(temp);
+    free((*void)temp);
 }
 #endif // LISTAVO_TURNO_H_INCLUDED
