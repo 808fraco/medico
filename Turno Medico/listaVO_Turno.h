@@ -19,7 +19,7 @@ void inicLista(Lista *l){
 }
 
 //! empty, isOol (is out of list)
-int isEmpty(Lista l){
+int isEmptyL(Lista l){
     if(l.acceso == NULL){ // Si no existe un nodo dentro de acceso, devuelve 1
         return 1;
     }else{ // y sino, devuelve 0 indicando q existe al menos un nodo dentro de la lista
@@ -37,7 +37,7 @@ int isOol(Lista l){
 //! Funciones de cursores (reset, forward)
 void resetL(Lista *l){
     l->cursor = l->acceso; // mueve el cursor al acceso (primer nodo)
-    l->aux = NULL; // el cursor auxiliar apunta a NULL indicando que no hay nada atras del cursor
+    l->aux = l->acceso; // lo mismo
 }
 
 void forwardL(Lista *l){
@@ -56,26 +56,29 @@ void insertL(Lista *l, Turno elem){
         return;
     }else{
         n->vipd = elem; //guarda el elemento dentro del nodo
-        n->siguiente = l->cursor; //engancha el nuevo nodo al siguiente nodo donde apunta cursor 
-        if(l->aux == NULL){ //insertamos al inicio si esta vacia
+        n->siguiente = l->cursor; //engancha el nuevo nodo al siguiente nodo donde apunta cursor
+        if(l->aux == l->cursor){ //insertamos al inicio si esta vacia
             l->acceso = n;
-        }else if(l->aux != NULL){ //insertamos en el medio o al final. Hacemos que el siguiente nodo del auxiliar, apunte a n
+            l->cursor=l->acceso;
+            l->aux=l->acceso;
+        }else { //insertamos en el medio o al final. Hacemos que el siguiente nodo del auxiliar, apunte a n
             l->aux->siguiente = n;
+            l->cursor=n;
         }
-        l->cursor = n; // el cursor apunta al nuevo nodo
     }
 }
 
 void supressL(Lista *l){
-    Nodo *temp = l->cursor; // guardamos el nodo donde esta el cursor en un nodo temporal
-    if(l->aux == NULL){ // si el auxiliar de la lista apunta a nada
-        l->acceso = temp->siguiente; // entonces el acceso pasa a apuntar al nodo siguiente
+    if(l->aux == l->cursor){ // si el auxiliar de la lista apunta a nada
+        l->acceso = l->cursor->siguiente; // entonces el acceso pasa a apuntar al nodo siguiente
+        free(l->cursor);
+        l->cursor=l->acceso;
+        l->aux=l->acceso;
 
-    }else if(l->aux != NULL){ // y sino, si el auxiliar es distinto a null (al menos un nodo adentro de la lista)
-        l->aux->siguiente = temp->siguiente; // el auxiliar pasara a valer el siguiente del nodo borrado
+    }else { // y sino, si el auxiliar es distinto a null (al menos un nodo adentro de la lista)
+        l->aux->siguiente = l->cursor->siguiente; // el auxiliar pasara a valer el siguiente del nodo borrado
+        free(l->cursor);
+        l->cursor=l->aux->siguiente;
     }
-
-    l->cursor = temp->siguiente; // el cursor pasara a valer el nodo siguiente del nodo borrado
-    free((*void)temp);
 }
 #endif // LISTAVO_TURNO_H_INCLUDED
