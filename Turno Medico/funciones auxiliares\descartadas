@@ -1,0 +1,6 @@
+// mostrar fecha en formato: dia,mes,año,hora,minuto y el estado del turno
+void mostrarFecha(Fecha f){
+    printf("%02d/%02d/%d %02d:%02d hs [%s]\n",
+       f.dia, f.mes, f.anio, f.hora, f.minuto,
+       (f.disponible == LIBRE) ? "Libre" : "Ocupado");
+}
