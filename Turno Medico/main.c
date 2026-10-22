@@ -7,6 +7,14 @@
 #include "listaE_paciente.h"
 #include "listaVO_turno.h"
 
+
+int buscarDia(Fecha f, dia){
+    if(getDia(f)==dia){
+        return 1;
+    }else{
+        return 0;
+    }
+}
 // RETORNA NEGATIVO SI f1 < f2, CERO SI SON IGUALES, POSITIVO SI f1 > f2.
 int compararFechas(Fecha f1, Fecha f2){
     if (f1.mes != f2.mes)   return f1.mes - f2.mes;
@@ -79,7 +87,7 @@ Turno cargaTurno(Turno aux){
     return aux; // Se agregó el return
 }
 
-    int esFeriado(Fecha f){
+int esFeriado(Fecha f){
     int feriados[5][2]={ {9,11}, {23,11}, {7,12}, {8,12}, {25,12} };// FERIADOS CON FORMATO ( {DIA, MES} ).
     int n=5; // CANTIDAD DE FERIADOS
     int i;
@@ -91,9 +99,11 @@ Turno cargaTurno(Turno aux){
     return 0;
 }
 
-void inicializarAgenda(Fecha agenda[]){
+void inicializarAgenda(Fecha agenda[], Turno l){
     int pos = 0;
     int mes, dia, hora, min;
+    int d=0;//Inicializo la variable auxiliar en 0 para el conteo de id turno.
+    setIdTurno(&l, 0);//inicializa
 
     // Bucle principal de meses
     for(mes = 11; mes <= 12; mes++){
@@ -107,28 +117,28 @@ void inicializarAgenda(Fecha agenda[]){
             if (!esDiaHabil(f_prueba)){
                 continue;
             }
-            if (esDiaHabil(f_prueba)|| !esFeriado(f_prueba)){
                 for(hora = 8; hora < 13; hora++){
                     for(min = 0; min <= 30; min += 30){
                         if (pos<390){
                         agenda[pos] = creaFecha(dia, mes, hora, min, LIBRE);
                         pos++;
+                        d++;
+                        setIdTurno(&l,d);
                         }
                     }
                 }
-            }
         }
     }
 }
 void limite(int limInf, int limSup, int *dato){
     int d = *dato;
     while(d < limInf || d > limSup){
-        printf("Numero invalido. Ingrese el numero nuevamente.\n");
+        printf("N%cmero invalido. Ingrese el n%cmero nuevamente.\n",163,163);
         scanf("%d", &d);
     }
     *dato = d;
 }
-void cargaPaciente(LPaciente *lp){
+void cargaPaciente(LPaciente *lp){ //funcion n
     //! Variables
     Paciente p;
     init(&p);
@@ -166,16 +176,76 @@ void cargaPaciente(LPaciente *lp){
     //! Insert en la lista
     if(isEmpty(*lp)){ // Si esta vacia, insertar en el principio
         insert(lp,p);
-    }else{ // sino, avanzar uno mas e insertar el paciente
-        forwards(lp);
+    }else{ // sino, avanzar hasta el final de la lista e insertar
+        reset(lp);
+        while(!isOos(*lp)){
+            forwards(lp);
+        }
         insert(lp,p);
     }
 }
 
+void mostrarPorDNI(LPaciente lp, int dni){
+    LPaciente listaAux = lp;
+    Paciente auxi;
+    reset(&listaAux);
+    while(!isOos(listaAux)){
+        auxi = copy(listaAux);
+        if(getDNI(auxi) == dni){
+            break;
+        }
+        forwards(&listaAux);
+    }
+    if(isOos(listaAux)){
+        printf("Error\n");
+    }else{
+        printf("Nombre: %s\n", getNombre(auxi));
+    }
+
+}
+
+void mostrarPacientes(LPaciente lp){
+LPaciente aux=lp;
+Paciente auxi;
+reset(&aux);
+int i=0;
+while(!isOos(aux)){
+    auxi=copy(aux);
+
+    printf("Paciente %d\n", i+1);
+    printf("Nombre: %s", getNombre(auxi));
+    printf("Apellido: %s", getApellido(auxi));
+    printf("DNI: %d\n", getDNI(auxi));
+    printf("Obra social: %s\n", (getOSocial(auxi)==1) ?"SI" :"NO");
+    i++;
+     forwards(&aux);
+    }
+    return;
+}
+
+void buscarYmostrar(Fecha agenda[], int mes, int dia){
+Fecha deseada;
+setMes(&deseada,mes);
+setDia(&deseada,dia);
+mostrarFecha(deseada);
+int i,l;
+for(i=0;i=390;i++){
+    if(getDia(agenda[i] == dia && getMes(agenda[i]) == mes && getDisponible(agenda[i])== LIBRE){
+
+    }
+
+
+
+
 int main(){
     Fecha agenda[390];
-    inicializarAgenda(agenda);
-
+    Turno ld;
+    inicializarAgenda(agenda, ld);
+    LPaciente listaE;
+    inic(&listaE);
+    cargaPaciente(&listaE);
+    cargaPaciente(&listaE);
+    mostrarPacientes(listaE);
     int i;
     for(i = 0; i < 390; i++){
         Fecha aux = agenda[i];
