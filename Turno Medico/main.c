@@ -120,6 +120,14 @@ void inicializarAgenda(Fecha agenda[]){
         }
     }
 }
+void limite(int limInf, int limSup, int *dato){
+    int d = *dato;
+    while(d < limInf || d > limSup){
+        printf("Numero invalido. Ingrese el numero nuevamente.\n");
+        scanf("%d", &d);
+    }
+    *dato = d;
+}
 void cargaPaciente(LPaciente *lp){
     //! Variables
     Paciente p;
