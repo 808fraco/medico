@@ -4,7 +4,6 @@
 #include <string.h>
 #include "fecha.h"
 
-#define MAX_MUTUAL 100
 
 // Estados del turno
 #define SOLICITADO 1
@@ -17,7 +16,7 @@ typedef struct {
     int id_turno;
     int dni_paciente;
     float monto;
-    char mutual[MAX_MUTUAL];
+    int mutual;
     Fecha fecha;
     int estado;
 } Turno;
@@ -27,7 +26,7 @@ void initTurno(Turno *t) {
     (*t).id_turno = 0;
     (*t).dni_paciente = 0;
     (*t).monto = 0.0;
-    strcpy((*t).mutual, "SIN MUTUAL");
+    (*t).mutual = 0;
     initFecha(&((*t).fecha));
     (*t).estado = SOLICITADO;
 }
@@ -45,8 +44,8 @@ void setMontoTurno(Turno *t, float monto) {
     (*t).monto = monto;
 }
 
-void setMutualTurno(Turno *t, char mut[]) {
-    strcpy((*t).mutual, mut);
+void setMutualTurno(Turno *t, int mut) {
+    (*t).mutual = mut;
 }
 
 void setFechaTurno(Turno *t, Fecha f) {
@@ -70,15 +69,8 @@ float getMontoTurno(Turno t) {
     return t.monto;
 }
 
-char* getMutualTurno(Turno t) {
-    char *m;
-    m = (char*)malloc(strlen(t.mutual)+1);
-    if(m==NULL){
-        return;
-    }else{
-        strcpy(m,t.mutual);
-        return m;
-    }
+int getMutualTurno(Turno t) {
+    return t.mutual;
 }
 
 Fecha getFechaTurno(Turno t) {
