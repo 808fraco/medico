@@ -312,6 +312,6 @@ int main(){
     inicLista(&VO);
     inicializarAgenda(agenda);
     cargaPaciente(&listaE);
-    solicitarUnTurno(&VO, &listaE);
+    solicitarUnTurno(&VO, &listaE, agenda);
     return 0;
 }
