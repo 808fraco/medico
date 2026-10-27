@@ -145,8 +145,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[])
     printf("Ingrese el ID del turno: "); // elegir horario
     scanf("%d", &id);
 
-    while (id < 0 || id >= 390 ||
-        getDisponible(agenda[id]) != LIBRE) {
+    while (id < 0 || id >= 390 || getDisponible(agenda[id]) != LIBRE) {
         printf("ID invalido o turno ocupado. Ingrese otro: ");
         scanf("%d", &id);
     }
