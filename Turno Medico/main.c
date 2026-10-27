@@ -157,8 +157,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[])
 
     resetL(vo);
 
-    while (!isOol(*vo) &&
-           compararFechas(getFechaTurno(copyL(*vo)), agenda[id]) < 0) {
+    while (!isOol(*vo) && compararFechas(getFechaTurno(copyL(*vo)), agenda[id]) < 0) {
         forwardL(vo);
     }
 
