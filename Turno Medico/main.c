@@ -87,6 +87,25 @@ int uniquedni(LPaciente p, int dni){
     }
     return 0;
 }
+void mostrarDatosTurno(Turno t, Fecha agenda[]){
+    printf("ID del turno: %d\n", getIdTurno(t));
+
+    switch(getMutualTurno(t)){
+        case 1:printf("Mutual: ANSES.\n");break;
+        case 2:printf("Mutual: DOSEP.\n");break;
+        case 3:printf("Mutual: OSDE.\n");break;
+        case 4:printf("Mutual: OSFATUN.\n");break;
+    }
+    mostrarFecha(agenda[getIdTurno(t)]);
+    switch(getEstadoTurno(t)){
+        case 1:printf("Estado: SOLICITADO.\n");break;
+        case 2:printf("Estado: CONFIRMADO.\n");
+            printf("Monto: %f\n", getMontoTurno(t));
+            break;
+        case 3:printf("Estado: ATENDIDO.\n");break;
+        case 4:printf("Estado: CANCELADO.\n");break;
+    }
+}
 //! REV
 void mostrarFechaPorPagina(Fecha agenda[]){
     int libres[390];
@@ -104,8 +123,7 @@ void cargaPaciente(LPaciente *lp);
 
 
  //! a)
-void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[])
-{
+void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
     Turno t;
 
@@ -145,10 +163,14 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[])
     printf("Ingrese el ID del turno: "); // elegir horario
     scanf("%d", &id);
 
+
+
     while (id < 0 || id >= 390 || getDisponible(agenda[id]) != LIBRE) {
         printf("ID invalido o turno ocupado. Ingrese otro: ");
         scanf("%d", &id);
     }
+    if()
+
     initTurno(&t);
     setIdTurno(&t, id);
     setDniPacienteTurno(&t, dni);
@@ -185,6 +207,26 @@ void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
         printf("No se encontr%c ninguna fecha libre en la agenda.\n",162);
     }
 }
+//! c)
+int mostrarSegunDNI(Lista l, Fecha agenda[], int dni){
+    Turno t;
+    reset(&l);
+    while(!isOol(l)){
+        t = copyL(l);
+        if(dni==getDniPacienteTurno(t)){
+            break;
+        }
+        forwardL(&l);
+    }
+    if(isOol(l)){
+        return 0;
+    }else{
+        mostrarDatosTurno(t, agenda);
+        return 1;
+    }
+}
+
+
 //! d)
 void fechaOcupadaAgenda(Fecha agenda[], int mes){
     int i,d=0;
@@ -199,6 +241,62 @@ void fechaOcupadaAgenda(Fecha agenda[], int mes){
         printf("No se encontr%c ninguna fecha ocupada en la agenda\n",162);
     }
 }
+//! g)
+int confirmarTurno(Lista *vo, LPaciente l){
+int id;
+Turno t;
+Paciente p;
+Lista aux = *vo;
+printf("Ingrese el ID del turno a confirmar: ");
+scanf("%d", &id);
+limite(0,389,&id);
+
+resetL(&aux);
+while(!isOol(aux)){
+    t=copyL(aux);
+    if(getIdTurno(t)==id){
+    break;
+    }
+    forwardL(&aux);
+    }
+    if(isOol(aux)){
+        printf("El turno ID no existe: %d\n", id);
+        return 0;
+    }
+    if(getEstadoTurno(t) != SOLICITADO){ //Controla que el turno se encuentre solicitado
+        printf("El turno no se encuentra solicitado.\n");
+        return 0;
+    }
+    int dni = getDniPacienteTurno(t);
+    reset(&l);
+    while(isOos(l)){
+        p = copy(l);
+        if(dni ==  getDNI(p)){
+            break;
+        }
+        forwards(&l)
+    }
+    if(isOos(l)){
+        printf("El DNI no se encuentra registrado dentro del sistema.\n");
+        return 0;
+    }
+    float monto;
+    int mutual;
+    if(!getOSocial(p)){
+        printf("Monto?\n");
+        scanf("%f", &monto);
+        setMontoTurno(&t, monto);
+        setMutualTurno(&t, 0);
+    }else{
+        printf("Mutual?\n");
+        printf("1. o1, 2. o2, 3. o3\n");
+        scanf("%d", &mutual);
+        limite(1,4,&mutual);
+        setMutualTurno(&t,mutual);
+        setMontoTurno(&t,0.0);
+    }
+}
+
 //! n)
 void cargaPaciente(LPaciente *lp){
     //! Variables
@@ -305,11 +403,15 @@ int main(){
     int TcargaActual = 0;
     Fecha agenda[390];
     LPaciente listaE;
+    int dni_buscar;
     inic(&listaE);
     Lista VO;
     inicLista(&VO);
     inicializarAgenda(agenda);
     cargaPaciente(&listaE);
     solicitarUnTurno(&VO, &listaE, agenda);
+    printf("Ingrese dni a buscar: ");
+    scanf("%d", &dni_buscar);
+    mostrarSegunDNI(VO, agenda, dni_buscar);
     return 0;
 }
