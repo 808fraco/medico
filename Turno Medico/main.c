@@ -340,7 +340,55 @@ insertL(vo, t);
 printf("Turno Confirmado correctamente!\n");
 return 1;
 }
+//! h)
+int cancelarTurno(Lista *t, Fecha agenda[], int id){
+    Turno tc;
+    if(isEmptyL(*t)){
+        printf("No hay turnos registrados.\n");
+        return 0;
+    }
+    resetL(t);
+    while(!isOol(*t)){
+        tc = copyL(*t);
+        if(getIdTurno(tc) == id){
+            break;
+        }
+        forwardL(t);
+    }
+    if(isOol(*t)){
+        printf("No hay turnos para cancelar.\n");
+        return 0;
+    }
+    setEstadoTurno(&tc,CANCELADO);
+    setDisponible(&agenda[id], LIBRE);
+    supressL(t);
+    insertL(t,tc);
+    printf("Turno cancelado exitosamente!\n");
+    return 1;
+}
 
+//! j)
+void eleminarTurnosCancelados(Lista *t){
+    FILE *tc;
+    tc = fopen("turnos_cancelados.txt", "w");
+    if(tc==NULL){
+        return;
+    }
+    Turno tt;
+    resetL(t);
+    while(!isOol(*t)){
+        tt = copyL(*t);
+        if(getEstadoTurno(tt) == CANCELADO){
+            printf("paso por el if\n");
+            fprintf(tc, "DATOS DEL TURNO:\n");
+            fprintf(tc, "ID del turno: %d\n", getIdTurno(tt));
+            supressL(t);
+        }else{
+            forwardL(t);
+        }
+    }
+    fclose(tc);
+}
 //! n)
 void cargaPaciente(LPaciente *lp){
     //! Variables
