@@ -430,11 +430,7 @@ void mostrarPacientePorDNI(LPaciente lp, int dni){
         printf("Error\n");
     }else{
         printf("---------DATOS DEL PACIENTE INGRESADO POR DNI--------------\n");
-        reset(&lp);
-        while(!isOos(lp)){
-        Paciente p=copy(lp);
-        mostrarPaciente(p);
-        forwards(&lp);
+        mostrarPaciente(auxi);
     }
     }
 
