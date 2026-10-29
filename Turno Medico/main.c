@@ -64,14 +64,15 @@ void mostrarFecha(Fecha f){
        (f.disponible == LIBRE) ? "Libre" : "Ocupado");
 }
 void limite(int limInf, int limSup, int *dato){
-    int d = *dato;
-    while(d < limInf || d > limSup){
-        printf("Numero invalido. Ingrese el numero nuevamente.\n");
-        while(getchar() != '\n');
-        *dato = -1;
-        scanf("%d", &d);
-    }
-    *dato = d;
+        int d = *dato;
+        if(d < limInf || d > limSup){
+            printf("Entrada invalida.\n");
+            while(scanf("%d", &d) != 1 || (d < limInf || d > limSup)){
+                printf("Entrada invalida.\n");
+                while (getchar() != '\n'); // Limpia completamente el buffer stdin
+            }
+        }
+        *dato = d;
 }
 int uniquedni(LPaciente p, int dni){
     Paciente aux; // paciente auxiliar que va actualizando durante el for
@@ -145,7 +146,6 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     Turno t;
     printf("Numero de DNI del paciente: "); // pedir DNI
     scanf("%d", &dni);
-
     limite(10000000, 99999999, &dni);
 
     if (!uniquedni(*l, dni)) { // verificar si existe
@@ -241,8 +241,6 @@ int mostrarTurnoPorDNI(Lista l, Fecha agenda[], int dni){
         return 1;
     }
 }
-
-
 //! d)
 void fechaOcupadaAgenda(Fecha agenda[], int mes){
     int i,d=0;
@@ -257,7 +255,6 @@ void fechaOcupadaAgenda(Fecha agenda[], int mes){
         printf("No se encontr%c ninguna fecha ocupada en la agenda\n",162);
     }
 }
-
 //! e)
 int buscarTurnoPorID(Lista *vo, int idBuscado){
 resetL(vo);
@@ -379,7 +376,6 @@ int cancelarTurno(Lista *t, Fecha agenda[], int dni){
         return 1;
     }
 }
-
 //! j)
 void eliminarTurnosCancelados(Lista *t){
     FILE *tc;
