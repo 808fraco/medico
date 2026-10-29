@@ -359,29 +359,37 @@ int cancelarTurno(Lista *t, Fecha agenda[], int id){
         printf("No hay turnos para cancelar.\n");
         return 0;
     }
-    setEstadoTurno(&tc,CANCELADO);
-    setDisponible(&agenda[id], LIBRE);
-    supressL(t);
-    insertL(t,tc);
-    printf("Turno cancelado exitosamente!\n");
-    return 1;
+    if(getEstadoTurno(tc) == SOLICITADO){
+            setEstadoTurno(&tc,CANCELADO);
+        setDisponible(&agenda[id], LIBRE);
+        supressL(t);
+        insertL(t,tc);
+        eliminarTurnosCancelados(&t);
+        printf("Turno cancelado exitosamente!\n");
+        return 1;
+    }
 }
 
 //! j)
-void eleminarTurnosCancelados(Lista *t){
+void eliminarTurnosCancelados(Lista *t){
     FILE *tc;
-    tc = fopen("turnos_cancelados.txt", "w");
+    tc = fopen("turnos_cancelados.txt", "a");
     if(tc==NULL){
         return;
     }
     Turno tt;
+
     resetL(t);
     while(!isOol(*t)){
         tt = copyL(*t);
         if(getEstadoTurno(tt) == CANCELADO){
-            printf("paso por el if\n");
-            fprintf(tc, "DATOS DEL TURNO:\n");
+            Fecha f = getFechaTurno(tt);
+            fprintf(tc,"\n");
             fprintf(tc, "ID del turno: %d\n", getIdTurno(tt));
+            fprintf(tc, "Dia: %d\n", getDia(f));
+            fprintf(tc, "Mes: %d\n", getMes(f));
+            fprintf(tc, "Hora: %02d:%02d\n", getHora(f), (getMinuto(f)));
+            fprintf(tc, "Estado: CANCELADO\n");
             supressL(t);
         }else{
             forwardL(t);
