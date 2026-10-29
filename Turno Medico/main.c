@@ -67,6 +67,8 @@ void limite(int limInf, int limSup, int *dato){
     int d = *dato;
     while(d < limInf || d > limSup){
         printf("Numero invalido. Ingrese el numero nuevamente.\n");
+        while(getchar() != '\n');
+        *dato = -1;
         scanf("%d", &d);
     }
     *dato = d;
@@ -141,15 +143,17 @@ void cargaPaciente(LPaciente *lp);
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
     Turno t;
-
     printf("Numero de DNI del paciente: "); // pedir DNI
     scanf("%d", &dni);
+
     limite(10000000, 99999999, &dni);
 
     if (!uniquedni(*l, dni)) { // verificar si existe
         printf("El paciente no esta registrado.\n");
         printf("Desea cargarlo? (1: Si / 0: No): ");
-        scanf("%d", &opcion);
+        if(scanf("%d", &opcion)!=1){
+            opcion=-1;
+        }
         limite(0, 1, &opcion);
 
         if (opcion == 0) {
@@ -341,8 +345,9 @@ printf("Turno Confirmado correctamente!\n");
 return 1;
 }
 //! h)
-int cancelarTurno(Lista *t, Fecha agenda[], int id){
+int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     Turno tc;
+    int id;
     if(isEmptyL(*t)){
         printf("No hay turnos registrados.\n");
         return 0;
@@ -350,7 +355,8 @@ int cancelarTurno(Lista *t, Fecha agenda[], int id){
     resetL(t);
     while(!isOol(*t)){
         tc = copyL(*t);
-        if(getIdTurno(tc) == id){
+        if(getDniPacienteTurno(tc) == dni){
+            id = getIdTurno(tc);
             break;
         }
         forwardL(t);
@@ -359,12 +365,16 @@ int cancelarTurno(Lista *t, Fecha agenda[], int id){
         printf("No hay turnos para cancelar.\n");
         return 0;
     }
-    if(getEstadoTurno(tc) == SOLICITADO){
-            setEstadoTurno(&tc,CANCELADO);
+    if(buscarTurnoPorID(t, id)==0){
+        printf("No se encontro ninguna ID registrada.\n");
+        return 0;
+    }
+    if(getEstadoTurno(tc) == SOLICITADO || getEstadoTurno(tc) == CONFIRMADO){
+        setEstadoTurno(&tc,CANCELADO);
         setDisponible(&agenda[id], LIBRE);
         supressL(t);
         insertL(t,tc);
-        eliminarTurnosCancelados(&t);
+        eliminarTurnosCancelados(t);
         printf("Turno cancelado exitosamente!\n");
         return 1;
     }
@@ -430,7 +440,6 @@ void cargaPaciente(LPaciente *lp){
     printf("%cEl paciente tiene obra social?\n[1. Si | 0. No]\n",168);
     scanf("%d",&o);
     limite(0,1,&o);
-    getchar();
     setOSocial(&p,o);
 
     //! Insert en la lista
@@ -488,8 +497,6 @@ void mostrarPacientePorDNI(LPaciente lp, int dni){
         printf("---------DATOS DEL PACIENTE INGRESADO POR DNI--------------\n");
         mostrarPaciente(auxi);
     }
-    }
-
 }
 //! q)
 void mostrarTodosPacientes(LPaciente lp){
@@ -543,37 +550,41 @@ int main(){
     LPaciente listaE;
     int dni_buscar;
     int mes_buscar;
-    
+
     //! INICIALIZADORES:
     inic(&listaE);
     Lista VO;
     inicLista(&VO);
     inicializarAgenda(agenda);
-    
+
     //! FUNCION PARA CARGAR UN PACIENTE:
     cargaPaciente(&listaE);
 
     //! FUNCION PARA SOLICITAR UN TURNO
     solicitarUnTurno(&VO, &listaE, agenda);
-    
+
     //! FUNCION DE MOSTRAR TURNO POR ID:
-    mostrarTurnoBuscado(&VO, agenda);
-    
+    //mostrarTurnoBuscado(&VO, agenda);
+
     //! FUNCION DE BUSCAR POR DNI:
-    printf("Ingrese dni a buscar: ");
-    scanf("%d", &dni_buscar);
-    mostrarPacientePorDNI(listaE, dni_buscar);
-    
+    //printf("Ingrese dni a buscar: ");
+    //scanf("%d", &dni_buscar);
+    //mostrarPacientePorDNI(listaE, dni_buscar);
+
     //! FUNCION PARA CONFIRMAR TURNO
     confirmarTurno(&VO, listaE);
-    
+    int dniC;
+    printf("DNI del cancelado?:");
+    scanf("%d", &dniC);
+    cancelarTurno(&VO,agenda,dniC);
+    eliminarTurnosCancelados(&VO);
     //! FUNCION PARA CALCULAR EL MONTO TOTAL DE UN MES:
-    printf("Ingrese el mes a consultar recaudacion(11=Noviembre, 12=Diciembre): ");
-    scanf("%d", &mes_buscar);
-    limite(11,12,&mes_buscar);
-    calcularMontoMes(VO, mes_buscar);
-    
+    //printf("Ingrese el mes a consultar recaudacion(11=Noviembre, 12=Diciembre): ");
+    //scanf("%d", &mes_buscar);
+    //limite(11,12,&mes_buscar);
+    //calcularMontoMes(VO, mes_buscar);
+
     //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
-    mostrarTodosPacientes(listaE);
+    //mostrarTodosPacientes(listaE);
     return 0;
 }
