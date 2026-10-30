@@ -63,16 +63,22 @@ void mostrarFecha(Fecha f){
        f.dia, f.mes, f.anio, f.hora, f.minuto,
        (f.disponible == LIBRE) ? "Libre" : "Ocupado");
 }
-void limite(int limInf, int limSup, int *dato){
-        int d = *dato;
-        if(d < limInf || d > limSup){
-            printf("Entrada invalida. Digite el dato correctamente.\n");
-            while(scanf("%d", &d) != 1 && (d < limInf || d > limSup)){
+
+int limite(int limInf, int limSup){
+        int n,d; // n guarda el numero q se desea guardar | d es para el scanf (0 = el tipo de dato no coincide con el entero (%d)
+        do{
+            d = scanf("%d", &n);
+            while(getchar() != '\n');
+            if(d == 0){
                 printf("Entrada invalida. Digite el dato correctamente.\n");
-                while (getchar() != '\n'); // limpia completamente el buffer stdin
             }
-        }
-        *dato = d;
+            while(n < limInf || n > limSup){
+                printf("Entrada invalida. Digite el dato correctamente.\n");
+                d = scanf("%d", &n);
+                while(getchar() != '\n');
+            }
+        }while(d != 1);
+        return n;
 }
 int uniquedni(LPaciente p, int dni){
     Paciente aux; // paciente auxiliar que va actualizando durante el while
@@ -110,19 +116,18 @@ void mostrarDatosTurno(Turno t, Fecha agenda[]){
     }
 }
 void mostrarPaciente(Paciente p){
-char *nom=getNombre(p);
-char *ape=getApellido(p);
-
-        printf("Nombre: %s", nom);
-        printf("Apellido: %s", ape);
-        printf("N%cmero de DNI: %d\n",163, getDNI(p));
-        if(getOSocial(p)){
-            printf("Obra social: Si tiene.\n");
-        }else{
-            printf("Obra social: No tiene.\n");
-        }
-free(nom);
-free(ape);
+    char *nom=getNombre(p);
+    char *ape=getApellido(p);
+    printf("Nombre: %s", nom);
+    printf("Apellido: %s", ape);
+    printf("N%cmero de DNI: %d\n",163, getDNI(p));
+    if(getOSocial(p)){
+        printf("Obra social: Si tiene.\n");
+    }else{
+        printf("Obra social: No tiene.\n");
+    }
+    free(nom);
+    free(ape);
 }
 //! REV
 void mostrarFechaPorPagina(Fecha agenda[]){
@@ -137,13 +142,14 @@ void mostrarFechaPorPagina(Fecha agenda[]){
 }
 
 void cargaPaciente(LPaciente *lp);
+void eliminarTurnosCancelados(Lista *t);
 
-
-//! ---------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------
+//! -------------------------------------------------------------------------------- FUNCIONES PRINCIPALES --------------------------------------------------------------------------------
 //! a)
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
     Turno t;
+    initTurno(&t);
     printf("Numero de DNI del paciente: "); // pedir DNI
     scanf("%d", &dni);
     limite(10000000, 99999999, &dni);
@@ -210,7 +216,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 //! b)
 void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
     int i,d=0;
-    for(i=0;i<390;i++){
+    for(i=0;i<MAX;i++){
         if(getDia(agenda[i]) == dia && getMes(agenda[i]) == mes && getDisponible(agenda[i]) == LIBRE){
             printf("ID del turno: %d\n", i);
             mostrarFecha(agenda[i]);
@@ -224,6 +230,7 @@ void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
 //! c)
 int mostrarTurnoPorDNI(Lista l, Fecha agenda[], int dni){
     Turno t;
+    initTurno(&t);
     resetL(&l);
     while(!isOol(l)){
         t = copyL(l);
@@ -284,6 +291,8 @@ int confirmarTurno(Lista *vo, LPaciente l){
 int id;
 Turno t;
 Paciente p;
+initTurno(&t);
+init(&p);
 
 printf("Ingrese el ID del turno a confirmar: ");
 scanf("%d", &id);
@@ -342,6 +351,7 @@ return 1;
 //! h)
 int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     Turno tc;
+    initTurno(&tc);
     int id;
     if(isEmptyL(*t)){ //Control por si no hay turnos registrados
         printf("No hay turnos registrados.\n");
@@ -375,9 +385,11 @@ int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     }
 }
 //! i)
-void proximoPaciente(Lista *t, LPaciente p){
+void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     Paciente pp;
     Turno tc;
+    init(&pp);
+    initTurno(&tc);
     if(isEmptyL(*t)){
         printf("No hay turnos registrados en el sistema.\n");
     }else if(isEmpty(p)){
@@ -386,7 +398,8 @@ void proximoPaciente(Lista *t, LPaciente p){
     resetL(t);
     while(!isOol(*t)){
         tc = copyL(*t);
-        if(getEstadoTurno(tc) == CONFIRMADO){
+        Fecha aux = getFechaTurno(tc);
+        if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux)==dia && getMes(aux)==mes){
             break;
         }
         forwardL(t);
@@ -398,8 +411,17 @@ void proximoPaciente(Lista *t, LPaciente p){
         }
         forwards(&p);
     }
-}
+    int dni = getDNI(pp);
+    if(isOos(p)){
+        printf("El paciente no se encuentra en el consultorio.\n");
+        cancelarTurno(t,agenda,dni);
+    }
 
+    mostrarPaciente(pp);
+    setEstadoTurno(&tc,ATENDIDO);
+    supressL(t);
+    insertL(t,tc);
+}
 //! j)
 void eliminarTurnosCancelados(Lista *t){
     FILE *tc;
@@ -593,7 +615,7 @@ int main(){
     confirmarTurno(&VO, listaE);
     int dniC;
     printf("DNI del cancelado?:");
-    scanf("%d", &dniC);
+    dniC = test(0,99888777);
     cancelarTurno(&VO,agenda,dniC);
     eliminarTurnosCancelados(&VO);
     //! FUNCION PARA CALCULAR EL MONTO TOTAL DE UN MES:
