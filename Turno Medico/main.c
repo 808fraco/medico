@@ -66,16 +66,16 @@ void mostrarFecha(Fecha f){
 void limite(int limInf, int limSup, int *dato){
         int d = *dato;
         if(d < limInf || d > limSup){
-            printf("Entrada invalida.\n");
-            while(scanf("%d", &d) != 1 || (d < limInf || d > limSup)){
-                printf("Entrada invalida.\n");
-                while (getchar() != '\n'); // Limpia completamente el buffer stdin
+            printf("Entrada invalida. Digite el dato correctamente.\n");
+            while(scanf("%d", &d) != 1 && (d < limInf || d > limSup)){
+                printf("Entrada invalida. Digite el dato correctamente.\n");
+                while (getchar() != '\n'); // limpia completamente el buffer stdin
             }
         }
         *dato = d;
 }
 int uniquedni(LPaciente p, int dni){
-    Paciente aux; // paciente auxiliar que va actualizando durante el for
+    Paciente aux; // paciente auxiliar que va actualizando durante el while
     if(isEmpty(p)){// si esta vacia, retornar 0
         return 0;
     }else{
@@ -139,8 +139,8 @@ void mostrarFechaPorPagina(Fecha agenda[]){
 void cargaPaciente(LPaciente *lp);
 
 
-
- //! a)
+//! ---------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------
+//! a)
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
     Turno t;
@@ -207,8 +207,6 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     printf("Fecha del turno asignado: ");
     mostrarFecha(agenda[id]);
 }
-
-
 //! b)
 void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
     int i,d=0;
@@ -345,37 +343,63 @@ return 1;
 int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     Turno tc;
     int id;
-    if(isEmptyL(*t)){
+    if(isEmptyL(*t)){ //Control por si no hay turnos registrados
         printf("No hay turnos registrados.\n");
         return 0;
     }
     resetL(t);
-    while(!isOol(*t)){
+    while(!isOol(*t)){ //recorrido con while no este fuera de la lista y guardar el turno cancelado en la variable "tc" y comprobar que el dni sea igual al ingresado
         tc = copyL(*t);
-        if(getDniPacienteTurno(tc) == dni){
-            id = getIdTurno(tc);
+        if(getDniPacienteTurno(tc) == dni){ //compara dni del turno con el ingresado
+            id = getIdTurno(tc); //guarda la id del turno
             break;
         }
         forwardL(t);
     }
-    if(isOol(*t)){
+    if(isOol(*t)){ //si no encontro nada, imprimir esto
         printf("No hay turnos para cancelar.\n");
         return 0;
     }
-    if(buscarTurnoPorID(t, id)==0){
-        printf("No se encontro ninguna ID registrada.\n");
+    if(buscarTurnoPorID(t, id)==0){ // control para ver si hay un turno registrado en la agenda
+        printf("No se encontro ninguna ID registrada en la agenda.\n");
         return 0;
     }
-    if(getEstadoTurno(tc) == SOLICITADO || getEstadoTurno(tc) == CONFIRMADO){
-        setEstadoTurno(&tc,CANCELADO);
-        setDisponible(&agenda[id], LIBRE);
-        supressL(t);
-        insertL(t,tc);
-        eliminarTurnosCancelados(t);
-        printf("Turno cancelado exitosamente!\n");
+    if(getEstadoTurno(tc) == SOLICITADO || getEstadoTurno(tc) == CONFIRMADO){ // si esta solicitado o confirmado el turno
+        setEstadoTurno(&tc,CANCELADO); // settear el estado del turno en cancelado
+        setDisponible(&agenda[id], LIBRE); // settear disponible la agenda en la posicion del id turno
+        supressL(t); // elimina el turno de la lista
+        insertL(t,tc); // inserta el nuevo turno cancelado en la lista
+        eliminarTurnosCancelados(t); // elimina el turno cancelado usando la funcion j
+        printf("%cTurno cancelado exitosamente!\n",173);
         return 1;
     }
 }
+//! i)
+void proximoPaciente(Lista *t, LPaciente p){
+    Paciente pp;
+    Turno tc;
+    if(isEmptyL(*t)){
+        printf("No hay turnos registrados en el sistema.\n");
+    }else if(isEmpty(p)){
+        printf("No hay pacientes registrados en el sistema.\n");
+    }
+    resetL(t);
+    while(!isOol(*t)){
+        tc = copyL(*t);
+        if(getEstadoTurno(tc) == CONFIRMADO){
+            break;
+        }
+        forwardL(t);
+    }
+    while(!isOos(p)){
+        pp = copy(p);
+        if(getDNI(pp) == getDniPacienteTurno(tc)){
+            break;
+        }
+        forwards(&p);
+    }
+}
+
 //! j)
 void eliminarTurnosCancelados(Lista *t){
     FILE *tc;
@@ -384,7 +408,6 @@ void eliminarTurnosCancelados(Lista *t){
         return;
     }
     Turno tt;
-
     resetL(t);
     while(!isOol(*t)){
         tt = copyL(*t);
@@ -514,7 +537,6 @@ void mostrarTodosPacientes(LPaciente lp){
     }
 printf("\nTotal de clientes registrados: %d\n", contador);
 }
-
 //! r)
 float calcularMontoMes(Lista l,int mesBuscado){
     float totalIngresado=0.0;
