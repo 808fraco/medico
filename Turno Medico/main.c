@@ -162,7 +162,6 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
             printf("Solicitud cancelada.\n");
             return;
         }
-        getchar();
         cargaPaciente(l);
 
         if (!uniquedni(*l, dni)) { // controlar el DNI
@@ -184,9 +183,9 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 
 
 
-    while (id < 0 || id >= 390 || getDisponible(agenda[id]) != LIBRE) {
-        printf("ID invalido o turno ocupado. Ingrese otro: ");
-        scanf("%d", &id);
+    while (getDisponible(agenda[id]) != LIBRE) {
+        printf("Turno ocupado. Ingrese otro ID: ");
+        id = limite(0, 389);
     }
 
     initTurno(&t);
@@ -442,6 +441,78 @@ void eliminarTurnosCancelados(Lista *t){
     }
     fclose(tc);
 }
+//! k)
+void mostrarTodosTurnosPagina(Lista l, Fecha agenda[]){
+
+    Turno t;
+    int contador = 0;
+    int pagina = 1;
+
+    if(isEmptyL(l)){ // Verifica si la lista esta vacia
+        printf("No hay turnos registrados en el sistema.\n");
+        return;
+    }
+    resetL(&l);  // Vuelve al inicio de la lista
+
+    printf("\n--- PAGINA %d ---\n", pagina);
+
+    while(!isOol(l)){ // Recorre todos los turnos de la lista
+
+        t = copyL(l);  //copia el turno actual
+        mostrarDatosTurno(t, agenda);
+        contador++;
+        forwardL(&l);  // Avanza al siguiente turno
+
+        if(contador == 5 && !isOol(l)){  // Cada 5 turnos realizar una pausa
+
+            printf("\nPresione ENTER para continuar...");
+            getchar();
+            pagina++;
+            contador = 0;
+
+            printf("\n--- PAGINA %d ---\n", pagina);
+        }
+    }
+    printf("\nFin de la lista de turnos.\n");
+}
+//! l)
+void mostrarTurnosMesRec(Lista l, Fecha agenda[], int mes){
+
+    if(isOol(l)){   // Si llega al final de la lista. Termina la funcion
+        return;
+    }
+    Turno t = copyL(l);
+    Fecha f = getFechaTurno(t);
+    int estado = getEstadoTurno(t);
+
+    // Verifica si pertenece al mes y esta solicitado o confirmado
+    if(getMes(f) == mes && (estado == SOLICITADO || estado == CONFIRMADO)){
+
+        mostrarDatosTurno(t, agenda);
+    }
+    // Avanza al siguiente turno
+    forwardL(&l);
+    mostrarTurnosMesRec(l, agenda, mes);
+}
+//! m) 
+int contarTurnosAtendidos(Lista l, int dia, int mes){
+    int suma = 0;
+
+    if(isOol(l)){   // Si llega al final de la lista, termina
+        return 0;
+    }
+
+    Turno t = copyL(l);
+    Fecha f = getFechaTurno(t);
+
+    // Verifica si el turno corresponde al dia, mes y esta atendido
+    if(getDia(f) == dia && getMes(f) == mes && getEstadoTurno(t) == ATENDIDO){
+        suma = 1;
+    }
+    forwardL(&l);
+
+    return suma + contarTurnosAtendidos(l, dia, mes);   // Suma el resultado con los siguientes turnos
+}
 //! n)
 void cargaPaciente(LPaciente *lp){
     //! Variables
@@ -619,7 +690,6 @@ int main(){
     //mostrarTodosPacientes(listaE);
     return 0;
 }
-
 
     //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
     //mostrarTodosPacientes(listaE);
