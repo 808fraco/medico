@@ -151,16 +151,12 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     Turno t;
     initTurno(&t);
     printf("Numero de DNI del paciente: "); // pedir DNI
-    scanf("%d", &dni);
-    limite(10000000, 99999999, &dni);
+    dni = limite(10000000,99999999);
 
     if (!uniquedni(*l, dni)) { // verificar si existe
         printf("El paciente no esta registrado.\n");
         printf("Desea cargarlo? (1: Si / 0: No): ");
-        if(scanf("%d", &opcion)!=1){
-            opcion=-1;
-        }
-        limite(0, 1, &opcion);
+        opcion = limite(0,1);
 
         if (opcion == 0) {
             printf("Solicitud cancelada.\n");
@@ -184,7 +180,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     }
 
     printf("Ingrese el ID del turno: "); // elegir horario
-    scanf("%d", &id);
+    id = limite(0,389);
 
 
 
@@ -276,8 +272,7 @@ return 0;
 void mostrarTurnoBuscado(Lista *vo, Fecha agenda[]){
 int id;
 printf("Ingrese el ID del turno a buscar: ");
-scanf("%d", &id);
-limite(0, 389, &id);
+id = limite(0,389);
 
 if(buscarTurnoPorID(vo, id)){
     Turno t=copyL(*vo);
@@ -295,8 +290,7 @@ initTurno(&t);
 init(&p);
 
 printf("Ingrese el ID del turno a confirmar: ");
-scanf("%d", &id);
-limite(0,389,&id);
+id = limite(0,389);
 
 resetL(vo);
 while(!isOol(*vo)){
@@ -337,8 +331,7 @@ while(!isOol(*vo)){
     }else{
         printf("Escoja mutual:\n");
         printf("1.ANSES\n2.DOSEP\n3.OSDE\n4.OSFATUN\n");
-        scanf("%d", &mutual);
-        limite(1,4,&mutual);
+        mutual = limite(1,4);
         setMutualTurno(&t,mutual);
         setMontoTurno(&t,0.0);
     }
@@ -383,6 +376,7 @@ int cancelarTurno(Lista *t, Fecha agenda[], int dni){
         printf("%cTurno cancelado exitosamente!\n",173);
         return 1;
     }
+    return 0;
 }
 //! i)
 void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
@@ -469,18 +463,15 @@ void cargaPaciente(LPaciente *lp){
 
     // Numero de DNI
     printf("%cN%cmero de DNI?\n", 168,163);
-    scanf("%d", &dni);
-    limite(10000000,99999999,&dni); // control de limite de numero de DNI
+    dni = limite(10000000,99999999); // control de limite de numero de DNI
     while(uniquedni(*lp,dni) == 1){
             printf("El n%cmero de DNI ya est%c registrado en el sistema. Ingrese uno distinto correctamente.\n",163,160);
-            scanf("%d", &dni);
-            limite(10000000,99999999,&dni);
+            dni = limite(10000000,99999999);
     }
     setDNI(&p,dni);
     // Obra social
     printf("%cEl paciente tiene obra social?\n[1. Si | 0. No]\n",168);
-    scanf("%d",&o);
-    limite(0,1,&o);
+    o = limite(0, 1);
     setOSocial(&p,o);
 
     //! Insert en la lista
@@ -615,7 +606,7 @@ int main(){
     confirmarTurno(&VO, listaE);
     int dniC;
     printf("DNI del cancelado?:");
-    dniC = test(0,99888777);
+    dniC = limite(10000000, 99999999);
     cancelarTurno(&VO,agenda,dniC);
     eliminarTurnosCancelados(&VO);
     //! FUNCION PARA CALCULAR EL MONTO TOTAL DE UN MES:
@@ -623,6 +614,12 @@ int main(){
     //scanf("%d", &mes_buscar);
     //limite(11,12,&mes_buscar);
     //calcularMontoMes(VO, mes_buscar);
+
+    //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
+    //mostrarTodosPacientes(listaE);
+    return 0;
+}
+
 
     //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
     //mostrarTodosPacientes(listaE);
