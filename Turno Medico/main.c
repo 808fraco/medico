@@ -458,7 +458,7 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
 //! j)
 void eliminarTurnosCancelados(Lista *t){
     FILE *tc;
-    tc = fopen("turnos_cancelados.txt", "a");
+    tc = fopen("turno_cancelados.txt", "a");
     if(tc==NULL){
         return;
     }
@@ -685,6 +685,7 @@ if (contadorTurnos>0){
         printf("\nNo se Registraron ingresos ni turnos confirmados para el mes %d.\n", mesBuscado);
     }
 return totalIngresado;
+}
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
 int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     int d,c, dia,mes;
@@ -748,7 +749,6 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
         }
     }
     return 1;
-}
 }
 int main(){
     Fecha agenda[390];
