@@ -751,17 +751,28 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
 }
 }
 int main(){
-    int TcargaActual = 0;
     Fecha agenda[390];
     LPaciente listaE;
-    int dni_buscar;
-    int mes_buscar;
-
+    int d;
     //! INICIALIZADORES:
     inic(&listaE);
     Lista VO;
     inicLista(&VO);
     inicializarAgenda(agenda);
-    while(gestionTurnos(&VO,agenda,&listaE) != 0);
+    //! MENU PRINCIPAL
+    while(d != 0){
+        printf("---------------------- SISTEMA DE GESTION MEDICA ----------------------\n");
+        printf(" 1. Gesti%cn de turnos\n",162);
+        //agregar opciones..
+        printf(" 0. Salir\n>");
+        d = limite(0,1);
+        switch(d){
+            case 1: gestionTurnos(&VO,agenda,&listaE);
+            break;
+            case 2: return 0;
+            break;
+        }
+
+    }
     return 0;
 }
