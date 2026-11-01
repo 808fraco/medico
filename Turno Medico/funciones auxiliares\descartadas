@@ -4,3 +4,43 @@ void mostrarFecha(Fecha f){
        f.dia, f.mes, f.anio, f.hora, f.minuto,
        (f.disponible == LIBRE) ? "Libre" : "Ocupado");
 }
+//! i)
+void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
+    Paciente pp;
+    Turno tc;
+    init(&pp);
+    initTurno(&tc);
+    int o;
+    if(isEmptyL(*t)){
+        printf("No hay turnos registrados en el sistema.\n");
+    }else if(isEmpty(p)){
+        printf("No hay pacientes registrados en el sistema.\n");
+    }
+    resetL(t);
+    while(!isOol(*t)){
+        tc = copyL(*t);
+        Fecha aux = getFechaTurno(tc);
+        if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux) == dia && getMes(aux) == mes){
+            break;
+        }
+        forwardL(t);
+    }
+    while(!isOos(p)){
+        pp = copy(p);
+        if(getDNI(pp) == getDniPacienteTurno(tc)){
+            break;
+        }
+        forwards(&p);
+    }
+    int dni = getDNI(pp);
+    mostrarPaciente(pp);
+    printf("El paciente se encuentra en el consultorio?\n[1.Si | 0. No]\n");
+    o = limite(0,1);
+    if(o == 1){
+        setEstadoTurno(&tc,ATENDIDO);
+        supressL(t);
+        insertL(t,tc);
+    }else{
+        cancelarTurno(t,agenda,dni);
+    }
+}
