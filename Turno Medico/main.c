@@ -390,7 +390,6 @@ int cancelarTurno(Lista *t, Fecha agenda[], int id){
     setDisponible(&agenda[id], LIBRE);
     supressL(t);
     insertL(t, tc);
-    eliminarTurnosCancelados(t);
     if(eliminarTurnosCancelados(t)==-1){
         return 0;
     }
