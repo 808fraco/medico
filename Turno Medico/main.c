@@ -400,7 +400,6 @@ int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     return 0;
 }
 //! i)
-//! i)
 void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     Paciente pp;
     Turno tc;
@@ -409,18 +408,26 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     int o;
     if(isEmptyL(*t)){
         printf("No hay turnos registrados en el sistema.\n");
+        return;
     }else if(isEmpty(p)){
         printf("No hay pacientes registrados en el sistema.\n");
+        return;
     }
     resetL(t);
     while(!isOol(*t)){
         tc = copyL(*t);
         Fecha aux = getFechaTurno(tc);
         if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux) == dia && getMes(aux) == mes){
+            printf("paso el break;\n");
             break;
         }
         forwardL(t);
     }
+    if(isOol(*t)){
+        printf("no se encontro ningun turno.\n");
+        return;
+    }
+    reset(&p);
     while(!isOos(p)){
         pp = copy(p);
         if(getDNI(pp) == getDniPacienteTurno(tc)){
@@ -428,14 +435,22 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
         }
         forwards(&p);
     }
+    if(isOos(p)){
+        printf("No se encontro al paciente con el turno confirmado.\n");
+        return;
+    }
     int dni = getDNI(pp);
+
+    printf("Datos del paciente en el turno:\n");
     mostrarPaciente(pp);
     printf("El paciente se encuentra en el consultorio?\n[1.Si | 0. No]\n");
     o = limite(0,1);
     if(o == 1){
+        printf("!set estado\n");
         setEstadoTurno(&tc,ATENDIDO);
         supressL(t);
         insertL(t,tc);
+        printf("exito!\n");
     }else{
         cancelarTurno(t,agenda,dni);
     }
@@ -721,9 +736,9 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
                                 c=1;
                             }
                             if(c==1){
+
                                 break;
                             }
-                            c=0;
                         }
                         proximoPaciente(VO,*listaE,agenda,dia,mes); return 1;
                     }
