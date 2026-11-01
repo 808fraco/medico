@@ -165,7 +165,7 @@ void mostrarFechaPorPagina(Fecha agenda[]){
 }
 
 void cargaPaciente(LPaciente *lp, int dni);
-void eliminarTurnosCancelados(Lista *t);
+int eliminarTurnosCancelados(Lista *t);
 
 //! -------------------------------------------------------------------------------- FUNCIONES PRINCIPALES --------------------------------------------------------------------------------
 //! a)
