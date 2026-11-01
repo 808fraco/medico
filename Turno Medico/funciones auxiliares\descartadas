@@ -4,43 +4,44 @@ void mostrarFecha(Fecha f){
        f.dia, f.mes, f.anio, f.hora, f.minuto,
        (f.disponible == LIBRE) ? "Libre" : "Ocupado");
 }
-//! i)
-void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
-    Paciente pp;
-    Turno tc;
-    init(&pp);
-    initTurno(&tc);
-    int o;
-    if(isEmptyL(*t)){
-        printf("No hay turnos registrados en el sistema.\n");
-    }else if(isEmpty(p)){
-        printf("No hay pacientes registrados en el sistema.\n");
-    }
-    resetL(t);
-    while(!isOol(*t)){
-        tc = copyL(*t);
-        Fecha aux = getFechaTurno(tc);
-        if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux) == dia && getMes(aux) == mes){
+//! k)
+void mostrarTodosTurnos(Lista v){
+    int cuentaPag = 0, pagActual = 0, i; // cuenta las paginas q imprime la lista de turnos
+    resetL(&v);
+    Turno t;
+    initTurno(&t);
+    while(!isOol(v)){
+        t = copyL(v);
+        int o;
+        printf("\n");
+        mostrarUnTurno(t);
+        forwardL(&v);
+        if(pagActual == 0){
+            if(cuentaPag == TAM_PAG){
+            printf("\n-----[1: Siguiente p%cgina | 0: Salir]-----\n");
+            o = limite(0,1);
+        }
+        }
+        if(cuentaPag == TAM_PAG){
+            printf("\n-----[1: Siguiente p%cgina | 2: P%cgina anterior | 0: Salir]-----\n");
+            o = limite(0,2);
+        }
+        if(o == 1 && cuentaPag == 0){
+            pagActual++;
+        }else if(o == 1){
+            pagActual++;
+        }else if(o == 2){
+            for(i=0;i<((pagActual-1)*TAM_PAG);i++){
+                resetL(&v);
+                printf("\n");
+                mostrarUnTurno(t);
+                forwardL(&v);
+            }
+            pagActual--;
+        }else if(o == 0){
             break;
         }
-        forwardL(t);
+        cuentaPag++;
     }
-    while(!isOos(p)){
-        pp = copy(p);
-        if(getDNI(pp) == getDniPacienteTurno(tc)){
-            break;
-        }
-        forwards(&p);
-    }
-    int dni = getDNI(pp);
-    mostrarPaciente(pp);
-    printf("El paciente se encuentra en el consultorio?\n[1.Si | 0. No]\n");
-    o = limite(0,1);
-    if(o == 1){
-        setEstadoTurno(&tc,ATENDIDO);
-        supressL(t);
-        insertL(t,tc);
-    }else{
-        cancelarTurno(t,agenda,dni);
-    }
+    return;
 }
