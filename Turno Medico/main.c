@@ -171,8 +171,9 @@ void eliminarTurnosCancelados(Lista *t);
 //! a)
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
-    int libres=0;
-    int mostradas=0;
+    int libres = 0;
+    int mostradas = 0;
+    int contador = 0;
     Turno t;
     printf("Numero de DNI del paciente: "); // pedir DNI
     dni = limite(10000000,99999999);
@@ -204,21 +205,21 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
         printf("No hay fechas disponibles en la agenda.\n");
         return;
     }
-    
-    int contador = 0;
-    
-    printf("\nFechas disponibles:\n"); // mostrar fechas libres
-    for (i = 0; i < 390; i++) {    //usar el mostrarfechaporpagina aca
+
+    int seguir = 1;   // 1 = seguir mostrando, 0 = elegir ahora
+
+    printf("\nFechas disponibles:\n");
+    for (i = 0; i < 390 && seguir; i++) {
         if (getDisponible(agenda[i]) == LIBRE) {
             printf("ID: %d - ", i);
             mostrarFecha(agenda[i]);
-            mostradas++; 
-            contador++; // Suma 1 por cada turno mostrado
+            mostradas++;
+            contador++;
 
-            if (contador == 20 && mostradas < libres) { 
-                printf("Presione ENTER para ver mas.");
-                getchar();
-                contador=0;
+            if (contador == 15 && mostradas < libres) {
+                printf("\n1. Ver mas fechas | 0. Elegir un ID ahora\n>");
+                seguir = limite(0, 1);
+                contador = 0;
             }
         }
     }
@@ -231,7 +232,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
         id = limite(0, 389);
     }
     setDisponible(&agenda[id], OCUPADO); // ocupar fecha
-    
+
     initTurno(&t);
     setIdTurno(&t, id);
     setDniPacienteTurno(&t, dni);
@@ -366,7 +367,7 @@ while(!isOol(*vo)){
         printf("Monto a pagar: \n");
         ok= scanf("%f", &monto); //a ok se le guarda 1 o 0, 1=si leyo bien el monto, 0=si no leyo bien el monto
         while(getchar()!= '\n');
-        while (ok!=1||monto<0){// control del monto 
+        while (ok!=1||monto<0){// control del monto
             printf("Monto invalido. Ingrese un numero mayor o igual a 0: ");
             ok=scanf("%f", &monto);
             while(getchar()!='\n');
@@ -558,7 +559,7 @@ void mostrarTurnosMesRec(Lista l, Fecha agenda[], int mes){
     forwardL(&l);
     mostrarTurnosMesRec(l, agenda, mes);
 }
-//! m) 
+//! m)
 int contarTurnosAtendidos(Lista l, int dia, int mes){
     int suma = 0;
 
