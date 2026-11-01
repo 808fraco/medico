@@ -27,6 +27,15 @@ int isEmptyL(Lista l){
     }
 }
 
+int isFullL(Lista l){
+    Nodo *n = (Nodo*)malloc(sizeof(Nodo));
+    if(n == NULL){
+        return 1;
+    }
+    free(n);
+    return 0;
+}
+
 int isOol(Lista l){
     if(l.cursor == NULL){ // si el cursor no apunta a nada, devuelve 1
         return 1;
