@@ -121,7 +121,7 @@ void mostrarUnTurno(Turno t){
     initFecha(&f);
     f = getFechaTurno(t);
     printf("ID del turno: %d\n", getIdTurno(t));
-    printf("N%mero de DNI: %d\n", 163, getDniPacienteTurno(t));
+    printf("N%cmero de DNI: %d\n", 163, getDniPacienteTurno(t));
     printf("Monto: %f\n", getMontoTurno(t));
     switch(getMutualTurno(t)){
         case 1:printf("Mutual: ANSES.\n");break;
@@ -248,22 +248,19 @@ void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
 //! c)
 int mostrarTurnoPorDNI(Lista l, Fecha agenda[], int dni){
     Turno t;
+    int cant=0;
     initTurno(&t);
     resetL(&l);
     while(!isOol(l)){
         t = copyL(l);
-        if(dni==getDniPacienteTurno(t)){
-            break;
+        if(dni == getDniPacienteTurno(t)){
+            mostrarDatosTurno(t, agenda);
+            cant++;
         }
         forwardL(&l);
     }
-    if(isOol(l)){
-        return 0;
-    }else{
-        mostrarDatosTurno(t, agenda);
-        return 1;
+    return cant;
     }
-}
 //! d)
 void fechaOcupadaAgenda(Fecha agenda[], int mes){
     int i,d=0;
@@ -344,10 +341,17 @@ while(!isOol(*vo)){
         return 0;
     }
     float monto;
+    int ok;
     int mutual;
     if(!getOSocial(p)){
         printf("Monto a pagar: \n");
-        scanf("%f", &monto);
+        ok= scanf("%f", &monto); //a ok se le guarda 1 o 0, 1=si leyo bien el monto, 0=si no leyo bien el monto
+        while(getchar()!= '\n');
+        while (ok!=1||monto<0){// control del monto 
+            printf("Monto invalido. Ingrese un numero mayor o igual a 0: ");
+            ok=scanf("%f", &monto);
+            while(getchar()!='\n');
+        }
         setMontoTurno(&t, monto);
         setMutualTurno(&t, 0);
     }else{
@@ -690,6 +694,7 @@ return totalIngresado;
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
 int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     int d,c, dia,mes;
+    d=-1;
     Fecha f;
     initFecha(&f);
     while(d != 0){
