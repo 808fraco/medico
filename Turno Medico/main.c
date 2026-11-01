@@ -115,6 +115,28 @@ void mostrarDatosTurno(Turno t, Fecha agenda[]){
         case 4:printf("Estado: CANCELADO.\n");break;
     }
 }
+void mostrarUnTurno(Turno t){
+    Fecha f;
+    initFecha(&f);
+    f = getFechaTurno(t);
+    printf("ID del turno: %d\n", getIdTurno(t));
+    printf("N%mero de DNI: %d\n", 163, getDniPacienteTurno(t));
+    printf("Monto: %f\n", getMontoTurno(t));
+    switch(getMutualTurno(t)){
+        case 1:printf("Mutual: ANSES.\n");break;
+        case 2:printf("Mutual: DOSEP.\n");break;
+        case 3:printf("Mutual: OSDE.\n");break;
+        case 4:printf("Mutual: OSFATUN.\n");break;
+    }
+    printf("D%ca: %02d\nMes: %02d\nA%co: %02d\n", 160,getDia(f),getMes(f),164,getAnio(f));
+    printf("Hora: %02d:%02d\n", getHora(f),getMinuto(f));
+    switch(getEstadoTurno(t)){
+        case 1:printf("Estado: SOLICITADO.\n");break;
+        case 2:printf("Estado: CONFIRMADO.\n");break;
+        case 3:printf("Estado: ATENDIDO.\n");break;
+        case 4:printf("Estado: CANCELADO.\n");break;
+    }
+}
 void mostrarPaciente(Paciente p){
     char *nom=getNombre(p);
     char *ape=getApellido(p);
@@ -378,11 +400,13 @@ int cancelarTurno(Lista *t, Fecha agenda[], int dni){
     return 0;
 }
 //! i)
+//! i)
 void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     Paciente pp;
     Turno tc;
     init(&pp);
     initTurno(&tc);
+    int o;
     if(isEmptyL(*t)){
         printf("No hay turnos registrados en el sistema.\n");
     }else if(isEmpty(p)){
@@ -392,7 +416,7 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     while(!isOol(*t)){
         tc = copyL(*t);
         Fecha aux = getFechaTurno(tc);
-        if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux)==dia && getMes(aux)==mes){
+        if(getEstadoTurno(tc) == CONFIRMADO && getDia(aux) == dia && getMes(aux) == mes){
             break;
         }
         forwardL(t);
@@ -405,15 +429,16 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
         forwards(&p);
     }
     int dni = getDNI(pp);
-    if(isOos(p)){
-        printf("El paciente no se encuentra en el consultorio.\n");
+    mostrarPaciente(pp);
+    printf("El paciente se encuentra en el consultorio?\n[1.Si | 0. No]\n");
+    o = limite(0,1);
+    if(o == 1){
+        setEstadoTurno(&tc,ATENDIDO);
+        supressL(t);
+        insertL(t,tc);
+    }else{
         cancelarTurno(t,agenda,dni);
     }
-
-    mostrarPaciente(pp);
-    setEstadoTurno(&tc,ATENDIDO);
-    supressL(t);
-    insertL(t,tc);
 }
 //! j)
 void eliminarTurnosCancelados(Lista *t){
