@@ -164,6 +164,7 @@ void mostrarFechaPorPagina(Fecha agenda[]){
     }
 }
 
+int fechaLibreEnAgenda(Fecha agenda[], int dia, int mes);
 void cargaPaciente(LPaciente *lp, int dni);
 int eliminarTurnosCancelados(Lista *t);
 
