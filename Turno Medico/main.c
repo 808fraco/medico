@@ -670,6 +670,70 @@ if (contadorTurnos>0){
         printf("\nNo se Registraron ingresos ni turnos confirmados para el mes %d.\n", mesBuscado);
     }
 return totalIngresado;
+//! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
+int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
+    int d,c, dia,mes;
+    Fecha f;
+    initFecha(&f);
+    while(d != 0){
+        printf("---------------------- GESTION DE TURNOS ----------------------\n");
+        printf(" 1. Solicitar un turno\n");
+        printf(" 2. Confirmar un turno\n");
+        printf(" 3. Cancelar un turno \n");
+        printf(" 4. Mostrar el proximo paciente\n");
+        printf(" 0. Regresar\n>");
+        d = limite(0,4);
+        switch(d){
+            case 1: solicitarUnTurno(VO,listaE,agenda); return 1;
+            break;
+            case 2: if(isEmptyL(*VO)){
+                        printf("No hay turnos registrados.\n");
+                        return 0;
+                    }else{
+                        confirmarTurno(VO,*listaE); return 1;
+                    }
+            break;
+            case 3: if(isEmptyL(*VO)){
+                        printf("No hay turnos registrados.\n");
+                        return 0;
+                    }else{
+                        printf("%cN%cmero de DNI del paciente?\n",168,163);
+                        int dni = limite(10000000,99999999);
+                        cancelarTurno(VO,agenda,dni);
+                        return 1;
+                    }
+            break;
+            case 4: if(isEmptyL(*VO)){
+                        printf("No hay turnos registrados.\n");
+                        return 0;
+                    }else{
+                        while(1){
+                            printf("%cD%ca?\n", 168,161);
+                            dia = limite(1,31);
+                            setDia(&f,dia);
+                            printf("%cMes?\n", 168);
+                            mes = limite(11,12);
+                            setMes(&f, mes);
+                            if(esDiaHabil(f) == 0 || esFeriado(f) == 1){
+                                printf("No es un d%ca h%cbil o laboral. Ingrese el d%ca correctamente.\n",161,160,161);
+                                continue;
+                            }else if(esDiaHabil(f) == 1 && esFeriado(f) == 0){
+                                c=1;
+                            }
+                            if(c==1){
+                                break;
+                            }
+                            c=0;
+                        }
+                        proximoPaciente(VO,*listaE,agenda,dia,mes); return 1;
+                    }
+            break;
+            case 0: return 0;
+            break;
+        }
+    }
+    return 1;
+}
 }
 int main(){
     int TcargaActual = 0;
@@ -683,40 +747,6 @@ int main(){
     Lista VO;
     inicLista(&VO);
     inicializarAgenda(agenda);
-
-    //! FUNCION PARA CARGAR UN PACIENTE:
-    cargaPaciente(&listaE);
-
-    //! FUNCION PARA SOLICITAR UN TURNO
-    solicitarUnTurno(&VO, &listaE, agenda);
-
-    //! FUNCION DE MOSTRAR TURNO POR ID:
-    //mostrarTurnoBuscado(&VO, agenda);
-
-    //! FUNCION DE BUSCAR POR DNI:
-    //printf("Ingrese dni a buscar: ");
-    //scanf("%d", &dni_buscar);
-    //mostrarPacientePorDNI(listaE, dni_buscar);
-
-    //! FUNCION PARA CONFIRMAR TURNO
-    confirmarTurno(&VO, listaE);
-    int dniC;
-    printf("DNI del cancelado?:");
-    dniC = limite(10000000, 99999999);
-    cancelarTurno(&VO,agenda,dniC);
-    eliminarTurnosCancelados(&VO);
-    //! FUNCION PARA CALCULAR EL MONTO TOTAL DE UN MES:
-    //printf("Ingrese el mes a consultar recaudacion(11=Noviembre, 12=Diciembre): ");
-    //scanf("%d", &mes_buscar);
-    //limite(11,12,&mes_buscar);
-    //calcularMontoMes(VO, mes_buscar);
-
-    //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
-    //mostrarTodosPacientes(listaE);
-    return 0;
-}
-
-    //! FUNCION PARA MOSTRAR TODOS LOS PACIENTES:
-    //mostrarTodosPacientes(listaE);
+    while(gestionTurnos(&VO,agenda,&listaE) != 0);
     return 0;
 }
