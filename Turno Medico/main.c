@@ -6,12 +6,13 @@
 #include "turno.h"
 #include "listaE_paciente.h"
 #include "listaVO_turno.h"
+
 int esFeriado(Fecha f){
     int feriados[5][2]={ {9,11}, {23,11}, {7,12}, {8,12}, {25,12} };// FERIADOS CON FORMATO ( {DIA, MES} ).
     int n=5; // CANTIDAD DE FERIADOS
     int i;
     for (i = 0; i < n; i++){
-        if (f.dia==feriados[i][0] && f.mes==feriados[i][1]){
+        if (getDia(f)==feriados[i][0] && getMes(f)==feriados[i][1]){
             return 1;
         }
     }
@@ -20,10 +21,10 @@ int esFeriado(Fecha f){
 
 // RETORNA NEGATIVO SI f1 < f2, CERO SI SON IGUALES, POSITIVO SI f1 > f2.
 int compararFechas(Fecha f1, Fecha f2){
-    if (f1.mes != f2.mes)   return f1.mes - f2.mes;
-    if (f1.dia != f2.dia)   return f1.dia - f2.dia;
-    if (f1.hora != f2.hora) return f1.hora - f2.hora;
-    return f1.minuto - f2.minuto;
+    if (getMes(f1) != getMes(f2))   return getMes(f1) - getMes(f2);
+    if (getDia(f1) != getDia(f2))   return getDia(f1) - getDia(f2);
+    if (getHora(f1) != getHora(f2)) return getHora(f1) - getHora(f2);
+    return getMinuto(f1) - getMinuto(f2);
 }
 
 // Devuelve los días de cualquier mes del año 2026 (año no bisiesto)
@@ -40,10 +41,10 @@ int diaEnMes(int mes){
 
 // Calcula el día de la semana para 2026 (1=Lunes, ..., 5=Viernes, 6=Sábado, 0=Domingo)
 int diaSemana(Fecha f){
-    int diaDelAnio = f.dia;
+    int diaDelAnio = getDia(f);
     int m;
     // SUMA LOS DIAS DE LOS MESES ANTERIORES EN 2026
-    for (m = 1; m < f.mes; m++){
+    for (m = 1; m < getMes(f); m++){
         diaDelAnio += diaEnMes(m);
     }
     // FORMULA PARA 2026
@@ -60,8 +61,8 @@ int esDiaHabil(Fecha f){
 
 void mostrarFecha(Fecha f){
     printf("%02d/%02d/%d %02d:%02d hs [%s]\n",
-       f.dia, f.mes, f.anio, f.hora, f.minuto,
-       (f.disponible == LIBRE) ? "Libre" : "Ocupado");
+       getDia(f), getMes(f), getAnio(f), getHora(f), getMinuto(f),
+       (getDisponible(f) == LIBRE) ? "Libre" : "Ocupado");
 }
 
 int limite(int limInf, int limSup){
