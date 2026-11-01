@@ -164,7 +164,7 @@ void mostrarFechaPorPagina(Fecha agenda[]){
     }
 }
 
-void cargaPaciente(LPaciente *lp);
+void cargaPaciente(LPaciente *lp, int dni);
 void eliminarTurnosCancelados(Lista *t);
 
 //! -------------------------------------------------------------------------------- FUNCIONES PRINCIPALES --------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
             printf("Solicitud cancelada.\n");
             return;
         }
-        cargaPaciente(l);
+        cargaPaciente(l, dni);
 
         if (!uniquedni(*l, dni)) { // controla el DNI
             printf("El DNI no coincide. No se asigno el turno.\n");
@@ -579,11 +579,11 @@ int contarTurnosAtendidos(Lista l, int dia, int mes){
     return suma + contarTurnosAtendidos(l, dia, mes);   // Suma el resultado con los siguientes turnos
 }
 //! n)
-void cargaPaciente(LPaciente *lp){
+void cargaPaciente(LPaciente *lp, int dni){
     //! Variables
     Paciente p;
     init(&p);
-    int dni,o; // dAux es para el control de que el numero de DNI sea unico
+    int o;
     char n[30], a[30];
 
     //! Carga de datos
@@ -597,14 +597,8 @@ void cargaPaciente(LPaciente *lp){
     fgets(a,30,stdin);
     setApellido(&p,a);
 
-    // Numero de DNI
-    printf("%cN%cmero de DNI?\n", 168,163);
-    dni = limite(10000000,99999999); // control de limite de numero de DNI
-    while(uniquedni(*lp,dni) == 1){
-            printf("El n%cmero de DNI ya est%c registrado en el sistema. Ingrese uno distinto correctamente.\n",163,160);
-            dni = limite(10000000,99999999);
-    }
     setDNI(&p,dni);
+
     // Obra social
     printf("%cEl paciente tiene obra social?\n[1. Si | 0. No]\n",168);
     o = limite(0, 1);
