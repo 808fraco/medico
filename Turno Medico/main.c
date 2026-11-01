@@ -437,7 +437,6 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
         printf("No se encontro al paciente con el turno confirmado.\n");
         return;
     }
-    int dni = getDNI(pp);
 
     printf("Datos del paciente en el turno:\n");
     mostrarPaciente(pp);
@@ -450,7 +449,7 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
         insertL(t,tc);
         printf("exito!\n");
     }else{
-        cancelarTurno(t,agenda,dni);
+        cancelarTurno(t,agenda,id);
     }
 }
 //! j)
