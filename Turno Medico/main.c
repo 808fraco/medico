@@ -749,7 +749,7 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
 int main(){
     Fecha agenda[390];
     LPaciente listaE;
-    int d;
+    int d=-1;
     //! INICIALIZADORES:
     inic(&listaE);
     Lista VO;
