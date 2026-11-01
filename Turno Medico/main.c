@@ -710,8 +710,8 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
                         printf("No hay turnos registrados.\n");
                         return 0;
                     }else{
-                        printf("%cN%cmero de ID del paciente?\n",168,163);
-                        int id = limite(0,390);
+                        printf("%cN%cmero de ID del turno?\n",168,163);
+                        int id = limite(0,389);
                         cancelarTurno(VO,agenda,id);
                         return 1;
                     }
@@ -720,24 +720,17 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
                         printf("No hay turnos registrados.\n");
                         return 0;
                     }else{
-                        while(1){
-                            printf("%cD%ca?\n", 168,161);
-                            dia = limite(1,31);
-                            setDia(&f,dia);
+                            do{
                             printf("%cMes?\n", 168);
                             mes = limite(11,12);
+                            printf("%cD%ca?\n", 168,161);
+                            dia = limite(1, diaEnMes(mes));
                             setMes(&f, mes);
-                            if(esDiaHabil(f) == 0 || esFeriado(f) == 1){
+                            setDia(&f,dia);
+                            if(!esDiaHabil(f)|| esFeriado(f)){
                                 printf("No es un d%ca h%cbil o laboral. Ingrese el d%ca correctamente.\n",161,160,161);
-                                continue;
-                            }else if(esDiaHabil(f) == 1 && esFeriado(f) == 0){
-                                c=1;
                             }
-                            if(c==1){
-
-                                break;
-                            }
-                        }
+                            }while(!esDiaHabil(f) || esFeriado(f));
                         proximoPaciente(VO,*listaE,agenda,dia,mes); return 1;
                     }
             break;
