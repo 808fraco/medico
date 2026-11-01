@@ -371,42 +371,32 @@ printf("Turno Confirmado correctamente!\n");
 return 1;
 }
 //! h)
-int cancelarTurno(Lista *t, Fecha agenda[], int dni){
+int cancelarTurno(Lista *t, Fecha agenda[], int id){
     Turno tc;
-    initTurno(&tc);
-    int id;
     if(isEmptyL(*t)){ //Control por si no hay turnos registrados
         printf("No hay turnos registrados.\n");
         return 0;
     }
-    resetL(t);
-    while(!isOol(*t)){ //recorrido con while no este fuera de la lista y guardar el turno cancelado en la variable "tc" y comprobar que el dni sea igual al ingresado
-        tc = copyL(*t);
-        if(getDniPacienteTurno(tc) == dni){ //compara dni del turno con el ingresado
-            id = getIdTurno(tc); //guarda la id del turno
-            break;
-        }
-        forwardL(t);
-    }
-    if(isOol(*t)){ //si no encontro nada, imprimir esto
-        printf("No hay turnos para cancelar.\n");
+    if(!buscarTurnoPorID(t, id)){
+        printf("No existe un turno con ID %d.\n", id);
         return 0;
     }
-    if(buscarTurnoPorID(t, id)==0){ // control para ver si hay un turno registrado en la agenda
-        printf("No se encontro ninguna ID registrada en la agenda.\n");
+    tc=copyL(*t);
+    if(getEstadoTurno(tc)!=SOLICITADO && getEstadoTurno(tc)!=CONFIRMADO){
+        printf("El turno no se pudo cancelar (ya atendido o cancelado).\n");
         return 0;
     }
-    if(getEstadoTurno(tc) == SOLICITADO || getEstadoTurno(tc) == CONFIRMADO){ // si esta solicitado o confirmado el turno
-        setEstadoTurno(&tc,CANCELADO); // settear el estado del turno en cancelado
-        setDisponible(&agenda[id], LIBRE); // settear disponible la agenda en la posicion del id turno
-        supressL(t); // elimina el turno de la lista
-        insertL(t,tc); // inserta el nuevo turno cancelado en la lista
-        eliminarTurnosCancelados(t); // elimina el turno cancelado usando la funcion j
+    setEstadoTurno(&tc, CANCELADO);
+    setDisponible(&agenda[id], LIBRE);
+    supressL(t);
+    insertL(t, tc);
+    eliminarTurnosCancelados(t);
+    if(eliminarTurnosCancelados(t)==-1){
+        return 0;
+    }
         printf("%cTurno cancelado exitosamente!\n",173);
         return 1;
     }
-    return 0;
-}
 //! i)
 void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     Paciente pp;
@@ -464,30 +454,35 @@ void proximoPaciente(Lista *t, LPaciente p,Fecha agenda[], int dia, int mes){
     }
 }
 //! j)
-void eliminarTurnosCancelados(Lista *t){
+int eliminarTurnosCancelados(Lista *t){
     FILE *tc;
-    tc = fopen("turno_cancelados.txt", "a");
-    if(tc==NULL){
-        return;
-    }
     Turno tt;
+    Fecha f;
+    int cant=0;
+
+    tc = fopen("turno_cancelado.txt", "a");
+    if(tc==NULL){
+        printf("No se pudo abrir el archivo.\n");
+        return -1;
+    }
+
     resetL(t);
     while(!isOol(*t)){
         tt = copyL(*t);
         if(getEstadoTurno(tt) == CANCELADO){
-            Fecha f = getFechaTurno(tt);
-            fprintf(tc,"\n");
-            fprintf(tc, "ID del turno: %d\n", getIdTurno(tt));
-            fprintf(tc, "Dia: %d\n", getDia(f));
-            fprintf(tc, "Mes: %d\n", getMes(f));
-            fprintf(tc, "Hora: %02d:%02d\n", getHora(f), (getMinuto(f)));
-            fprintf(tc, "Estado: CANCELADO\n");
+            f=   getFechaTurno(tt);
+            fprintf(tc, "ID: %d | DNI: %d | Fecha: %02d/%02d/%d %02d:%02d | Monto: %.2f | Mutual: %d | Estado: CANCELADO\n",
+                    getIdTurno(tt), getDniPacienteTurno(tt),
+                    getDia(f), getMes(f), getAnio(f), getHora(f), getMinuto(f),
+                    getMontoTurno(tt), getMutualTurno(tt));
             supressL(t);
+            cant++;
         }else{
             forwardL(t);
         }
     }
     fclose(tc);
+    return cant;
 }
 //! k)
 void mostrarTodosTurnosPagina(Lista l, Fecha agenda[]){
@@ -716,9 +711,9 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
                         printf("No hay turnos registrados.\n");
                         return 0;
                     }else{
-                        printf("%cN%cmero de DNI del paciente?\n",168,163);
-                        int dni = limite(10000000,99999999);
-                        cancelarTurno(VO,agenda,dni);
+                        printf("%cN%cmero de ID del paciente?\n",168,163);
+                        int id = limite(0,390);
+                        cancelarTurno(VO,agenda,id);
                         return 1;
                     }
             break;
