@@ -171,12 +171,13 @@ void eliminarTurnosCancelados(Lista *t);
 //! a)
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, i;
+    int libres=0;
+    int mostradas=0;
     Turno t;
-    initTurno(&t);
     printf("Numero de DNI del paciente: "); // pedir DNI
     dni = limite(10000000,99999999);
 
-    if (!uniquedni(*l, dni)) { // verificar si existe
+    if (!uniquedni(*l, dni)) { // verifica si existe
         printf("El paciente no esta registrado.\n");
         printf("Desea cargarlo? (1: Si / 0: No): ");
         opcion = limite(0,1);
@@ -187,30 +188,50 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
         }
         cargaPaciente(l);
 
-        if (!uniquedni(*l, dni)) { // controlar el DNI
+        if (!uniquedni(*l, dni)) { // controla el DNI
             printf("El DNI no coincide. No se asigno el turno.\n");
             return;
         }
     }
 
+    // cuenta las fechas libres para saber si hay lugar
+    for (i = 0; i < 390; i++) {
+        if (getDisponible(agenda[i]) == LIBRE) {
+            libres++;
+        }
+    }
+    if (libres == 0) {
+        printf("No hay fechas disponibles en la agenda.\n");
+        return;
+    }
+    
+    int contador = 0;
+    
     printf("\nFechas disponibles:\n"); // mostrar fechas libres
     for (i = 0; i < 390; i++) {    //usar el mostrarfechaporpagina aca
         if (getDisponible(agenda[i]) == LIBRE) {
             printf("ID: %d - ", i);
             mostrarFecha(agenda[i]);
+            mostradas++; 
+            contador++; // Suma 1 por cada turno mostrado
+
+            if (contador == 20 && mostradas < libres) { 
+                printf("Presione ENTER para ver mas.");
+                getchar();
+                contador=0;
+            }
         }
     }
 
     printf("Ingrese el ID del turno: "); // elegir horario
     id = limite(0,389);
 
-
-
     while (getDisponible(agenda[id]) != LIBRE) {
         printf("Turno ocupado. Ingrese otro ID: ");
         id = limite(0, 389);
     }
-
+    setDisponible(&agenda[id], OCUPADO); // ocupar fecha
+    
     initTurno(&t);
     setIdTurno(&t, id);
     setDniPacienteTurno(&t, dni);
@@ -225,8 +246,6 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 
     insertL(vo, t); // insertar ordenado
 
-    setDisponible(&agenda[id], OCUPADO); // ocupar fecha
-
     printf("\nTurno solicitado correctamente. ID: %d\n", id);
     printf("Fecha del turno asignado: ");
     mostrarFecha(agenda[id]);
@@ -234,7 +253,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 //! b)
 void fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
     int i,d=0;
-    for(i=0;i<MAX;i++){
+    for(i=0;i<390;i++){
         if(getDia(agenda[i]) == dia && getMes(agenda[i]) == mes && getDisponible(agenda[i]) == LIBRE){
             printf("ID del turno: %d\n", i);
             mostrarFecha(agenda[i]);
