@@ -628,7 +628,7 @@ void mostrarPacientePorDNI(LPaciente lp, int dni){
 //! q)
 void mostrarTodosPacientes(LPaciente lp){
     if (isEmpty(lp)){
-    printf("ERROR: No hay pacientes registrados en el sistema.");
+    printf("ERROR: No hay pacientes registrados en el sistema.\n");
     return;
     }
     printf("\n========================================\n");
