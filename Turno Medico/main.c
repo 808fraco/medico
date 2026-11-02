@@ -637,7 +637,7 @@ void mostrarTodosPacientes(LPaciente lp){
     reset(&lp);
     while(!isOos(lp)){
         Paciente p=copy(lp);
-        printf("\nPaciente %d: \n", contador);
+        printf("\nPaciente %d: \n", contador+1);
         mostrarPaciente(p);
         contador++;
         forwards(&lp);
@@ -812,6 +812,41 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     }
     return 1;
 }
+
+void gestionPacientes(Lista *VO, LPaciente *ListaE, Fecha agenda[]){
+int d=-1, dni;
+while (d!=0){
+        printf("---------------------- GESTION DE PACIENTES ----------------------\n");
+        printf(" 1. Cargar un paciente\n");
+        printf(" 2. Eliminar un paciente\n");
+        printf(" 3. Buscar un paciente por DNI \n");
+        printf(" 4. Mostrar todos los pacientes\n");
+        printf(" 0. Regresar\n>");
+        d=limite(0,4);
+        switch(d){
+        case 1:
+            printf("%cN%cmero de DNI del paciente?\n", 168, 163);
+            dni=limite(10000000, 99999999);
+            if(uniquedni(*ListaE, dni)){
+                printf("Ya existe un paciente con ese DNI.\n");
+            }else{
+                cargaPaciente(ListaE, dni);
+            }
+            break;
+       // case 2: break;
+        case 3:
+            printf("%cN%cmero de DNI del paciente?\n", 168, 163);
+            dni=limite(10000000, 99999999);
+            mostrarPacientePorDNI(*ListaE, dni);
+            break;
+
+        case 4: 
+            mostrarTodosPacientes(*ListaE); 
+            break;
+
+        }
+    }
+}
 int main(){
     Fecha agenda[390];
     LPaciente listaE;
@@ -825,12 +860,13 @@ int main(){
     while(d != 0){
         printf("---------------------- SISTEMA DE GESTION MEDICA ----------------------\n");
         printf(" 1. Gesti%cn de turnos\n",162);
+        printf(" 2. Gesti%cn de pacientes\n",162);
         //agregar opciones..
         printf(" 0. Salir\n>");
-        d = limite(0,1);
+        d = limite(0,2);
         switch(d){
-            case 1: gestionTurnos(&VO,agenda,&listaE);
-            break;
+            case 1: gestionTurnos(&VO,agenda,&listaE); break;
+            case 2: gestionPacientes(&VO, &listaE, agenda); break;
             case 2: return 0;
             break;
         }
