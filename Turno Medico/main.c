@@ -1018,6 +1018,47 @@ case 4:
     }
 }
 
+void estadisticas(Lista *VO, Fecha agenda[]){
+int d=-1, dia, mes, cant;
+while(d!=0){
+    printf("==================== ESTADISTICAS Y REPORTES ====================\n");
+    printf(" [1] Mostrar todos los turnos (paginado)\n");
+    printf(" [2] Mostrar turnos asignados de un mes\n");
+    printf(" [3] Contar turnos atendidos de un dia\n");
+    printf(" [4] Calcular el monto ingresado en un mes\n");
+    printf(" [0] Regresar\n>");
+    d=limite(0,4);
+    switch(d){
+    case 1:
+        mostrarTodosTurnosPagina(*VO, agenda);
+        break;
+    case 2:
+        printf("%cMes?\n", 168);
+        mes = limite(11,12);
+        resetL(VO);
+        mostrarTurnosMesRec(*VO, agenda, mes);
+        break;
+    case 3:
+        printf("%cMes?\n", 168);
+        mes = limite(11,12);
+        printf("%cD%ca?\n", 168, 161);
+        dia = limite(1, diaEnMes(mes));
+        resetL(VO);
+        cant=contarTurnosAtendidos(*VO, dia, mes);
+        if(cant==0){
+            printf("No se registraron turnos atendidos en el dia: %d/%d.\n", dia, mes);
+            }else{
+            printf("Se registraron %d turnos atendidos en el dia: %d/%d.\n", cant, dia, mes);
+            }
+        break;
+    case 4:
+        printf("%cMes?\n", 168);
+        mes = limite(11,12);
+        calcularMontoMes(*VO, mes);
+        break;
+        }
+    }
+}
 int main(){
     Fecha agenda[390];
     LPaciente listaE;
@@ -1047,6 +1088,12 @@ int main(){
             break;
             case 3: system("cls");
                     consultasAgenda(&VO, agenda);
+            break;
+            case 4: system("cls");
+                    estadisticas(&VO, agenda);
+            break;
+            case 5: system("cls");
+                    //funcion
             break;
             
             case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
