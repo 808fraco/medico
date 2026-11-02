@@ -803,6 +803,29 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
 //! t)
 void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
     FILE *archivo;
+
+    // comprueba que existan los tres archivos antes de tocar nada
+    archivo = fopen("pacientes.txt", "r");
+    if(archivo == NULL){
+        printf("No se encontro pacientes.txt. No se cargo nada.\n");
+        return;
+    }
+    fclose(archivo);
+
+    archivo = fopen("agenda.txt", "r");
+    if(archivo == NULL){
+        printf("No se encontro agenda.txt. No se cargo nada.\n");
+        return;
+    }
+    fclose(archivo);
+
+    archivo = fopen("turno.txt", "r");
+    if(archivo == NULL){
+        printf("No se encontro turno.txt. No se cargo nada.\n");
+        return;
+    }
+    fclose(archivo);
+
     // vacia lo que haya cargado para no duplicar datos
     resetL(vo);
     while(!isOol(*vo)){
@@ -886,7 +909,7 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
 
             Turno t;
             Fecha f;
-
+            
             // crea el turno y carga sus datos.
             initTurno(&t);
 
@@ -906,10 +929,8 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
             }
             // inserta el turno ordenado por fecha.
             resetL(vo);
-
             while(!isOol(*vo) &&
                 compararFechas(getFechaTurno(copyL(*vo)), f) < 0){
-
                 forwardL(vo);
             }
             insertL(vo, t);
