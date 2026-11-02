@@ -947,7 +947,7 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
 
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
 int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
-    int d,c, dia,mes;
+    int d,dia,mes;
     d=-1;
     Fecha f;
     initFecha(&f);
@@ -1040,7 +1040,7 @@ void gestionPacientes(LPaciente *lp, Lista VO){
             case 4:
                 mostrarTodosPacientes(*lp);
                 break;
-            case 0: system("cls"); return 0;
+            case 0: system("cls"); return;
             break;
         }
     }
