@@ -814,36 +814,42 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     return 1;
 }
 
-int gestionPacientes(LPaciente *lp, Lista *VO, Fecha agenda[]){
+void gestionPacientes(LPaciente *lp, Lista VO){
     int d = -1, dni;
     while(d != 0){
         printf("==================== GESTI%cN DE PACIENTES ====================\n",224);
         printf(" [1] Cargar un paciente\n");
         printf(" [2] Eliminar un paciente\n");
-        printf(" [3] Buscar un paciente por n%mero de DNI\n",163);
+        printf(" [3] Buscar un paciente por n%cmero de DNI\n",163);
         printf(" [4] Mostrar todos los pacientes\n");
         printf(" [0] Regresar\n");
         printf("==============================================================\n>");
         d = limite(0,4);
         switch(d){
-            case 1: printf("%cN%cmero de DNI?\n>");
-                    dni = limite(minDNI, maxDNI);
-                    cargaPaciente(lp,dni);
+            case 1:
+                printf("%cN%cmero de DNI?\n>", 168, 163);
+                dni = limite(minDNI, maxDNI);
+                if(uniquedni(*lp, dni)){
+                    printf("ERROR: Ya existe un paciente con ese DNI.\n");
+                }else{
+                cargaPaciente(lp,dni);
+                }
             break;
-            case 2: if(isEmpty(*lp)){
-                        printf("ERROR: No hay pacientes registrados.\n");
-                    }else{
-                        // la funcion enie...
-                    }
+            case 2:
+                if(isEmpty(*lp)){
+                    printf("ERROR: No hay pacientes registrados.\n");
+                }else{
+                    // la funcion enie...
+                }
             break;
-            case 4: if(isEmpty(*lp)){
-                        printf("ERROR: No hay pacientes registrados.\n");
-                    }else{
-                        printf("%cN%cmero de DNI?\n>");
-                        dni = limite(minDNI, maxDNI);
-                        mostrarPacientePorDNI(*lp,dni);
-                    }
-            break;
+            case 3:
+                printf("%cN%cmero de DNI?\n>",168,163);
+                dni=limite(minDNI, maxDNI);
+                mostrarPacientePorDNI(*lp, dni);
+                break;
+            case 4:
+                mostrarTodosPacientes(*lp);
+                break;
             case 0: system("cls"); return 0;
             break;
         }
@@ -874,7 +880,7 @@ int main(){
                     gestionTurnos(&VO,agenda,&listaE);
             break;
             case 2: system("cls");
-                    gestionPacientes(&listaE,&VO,agenda);
+                    gestionPacientes(&listaE, VO);
             break;
             case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
             break;
