@@ -288,7 +288,7 @@ if(buscarTurnoPorID(vo, id)){
     Turno t=copyL(*vo);
     mostrarDatosTurno(t, agenda);
     }else {
-        printf("El turno con ID %d no est%c registrado en la lista. \n",160, id);
+        printf("El turno con ID %d no est%c registrado en la lista. \n",id, 160);
     }
 }
 //! g)
@@ -855,6 +855,45 @@ void gestionPacientes(LPaciente *lp, Lista VO){
         }
     }
 }
+
+void consultasAgenda(Lista *VO, Fecha agenda[]){
+int d=-1, dia, mes, dni, cant;
+while(d!=0){
+            printf("==================== CONSULTAS DE AGENDA ====================\n");
+            printf(" [1] Buscar fechas libres por dia y mes\n");
+            printf(" [2] Mostrar los turnos de un paciente (por DNI)\n");
+            printf(" [3] Buscar fechas ocupadas por mes\n");
+            printf(" [4] Buscar un turno por ID\n");
+            printf(" [0] Regresar\n>");
+    d=limite(0,4);
+    switch(d){
+case 1:
+    printf("%cMes?\n", 168);
+    mes = limite(11,12);
+    printf("%cD%ca?\n", 168, 161);
+    dia = limite(1, diaEnMes(mes));
+    fechaLibreEnAgenda(agenda, dia, mes);
+    break;
+case 2:
+    printf("%cN%cmero de DNI?\n>", 168, 163);
+    dni=limite(minDNI, maxDNI);
+    cant=mostrarTurnoPorDNI(*VO, agenda, dni);
+    if(cant==0){
+        printf("El paciente con DNI %d no tiene turnos registrados.\n", dni);
+    }
+    break;
+case 3:
+    printf("%cMes?\n", 168);
+    mes = limite(11,12);
+    fechaOcupadaAgenda(agenda, mes);
+    break;
+case 4:
+    mostrarTurnoBuscado(VO, agenda);
+    break;
+        }
+    }
+}
+
 int main(){
     Fecha agenda[390];
     LPaciente listaE;
@@ -882,6 +921,10 @@ int main(){
             case 2: system("cls");
                     gestionPacientes(&listaE, VO);
             break;
+            case 3: system("cls");
+                    consultasAgenda(&VO, agenda);
+            break;
+            
             case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
             break;
         }
