@@ -873,7 +873,7 @@ int main(){
                     gestionTurnos(&VO,agenda,&listaE);
             break;
             case 2: system("cls");
-                    gestionPacientes(&listaE);
+                    gestionPacientes(&listaE,&VO,agenda);
             break;
             case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
             break;
