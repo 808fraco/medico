@@ -1059,6 +1059,30 @@ while(d!=0){
         }
     }
 }
+
+void archivosBackup(Lista *VO, LPaciente *listaE, Fecha agenda[]){
+int d=-1, op;
+while(d!=0){
+    printf("==================== ARCHIVOS Y BACKUP ====================\n");
+    printf(" [1] Generar backup\n");
+    printf(" [2] Cargar backup\n");
+    printf(" [0] Regresar\n>");
+    d = limite(0,2);
+    switch(d){
+        case 1:
+            backup(*VO, *listaE, agenda);
+            break;
+        case 2:
+            printf("Cargar el backup reemplaza todos los datos actuales.\n%cDesea continuar? [1. Si | 0. No]\n>", 168);
+            op = limite(0,1);
+            if(op==1){
+                cargarBackup(VO, listaE, agenda);
+            }
+            break;
+        }
+    }
+}
+
 int main(){
     Fecha agenda[390];
     LPaciente listaE;
@@ -1093,7 +1117,7 @@ int main(){
                     estadisticas(&VO, agenda);
             break;
             case 5: system("cls");
-                    //funcion
+                    archivosBackup(&VO, &listaE, agenda);
             break;
             
             case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
