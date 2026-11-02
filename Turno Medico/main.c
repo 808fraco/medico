@@ -722,7 +722,7 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
         char *ape = getApellido(p);
 
         // guarda los datos del paciente.
-        fprintf(archivo, "%s %s %d %d\n", nom, ape, getDNI(p), getOSocial(p));
+        fprintf(archivo, "%s%s%d\n%d\n", nom, ape, getDNI(p), getOSocial(p));
         free(nom);
         free(ape);
 
@@ -753,6 +753,130 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
     fclose(archivo);
 
     printf("BACKUP REALIZADO CORRECTAMENTE\n");
+}
+
+//! t)
+void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
+    FILE *archivo;
+    // vacia lo que haya cargado para no duplicar datos
+    resetL(vo);
+    while(!isOol(*vo)){
+        supressL(vo);
+    }
+    inic(lp);
+
+    // CARGAR LOS PACIENTES
+    archivo = fopen("pacientes.txt", "r");
+
+    if(archivo != NULL){
+        char nom[30], ape[30];
+        int dni, osocial;
+
+        // lee los datos de los pacientes.
+        while(fgets(nom, 30, archivo) != NULL){
+
+            if(fgets(ape, 30, archivo) == NULL){
+                break;
+            }
+            if(fscanf(archivo, "%d%d ", &dni, &osocial) != 2){
+                break;
+            }
+            // crea el paciente y carga sus datos.
+            Paciente p;
+            init(&p);
+            setNombre(&p, nom);
+            setApellido(&p, ape);
+            setDNI(&p, dni);
+            setOSocial(&p, osocial);
+
+            // inserta el paciente en la lista.
+            if(!isFull(*lp)){
+                if(isEmpty(*lp)){
+                    insert(lp, p);
+                }else{
+                    forwards(lp);
+                    insert(lp, p);
+                }
+            }
+        }
+        fclose(archivo);
+        printf("Pacientes cargados correctamente.\n");
+
+    }else{
+        printf("No se encontro el archivo pacientes.txt\n");
+    }
+    // CARGAR LA AGENDA
+    archivo = fopen("agenda.txt", "r");
+
+    if(archivo != NULL){
+        int i, dia, mes, anio, hora, min, disp;
+
+        // lee las 390 fechas de la agenda.
+        for(i = 0; i < 390; i++){
+
+            if(fscanf(archivo, "%d %d %d %d %d %d",
+                &dia, &mes, &anio, &hora, &min, &disp) == 6){
+
+                agenda[i] = creaFecha(dia, mes, hora, min, disp);
+            }
+        }
+        fclose(archivo);
+        printf("Agenda cargada correctamente.\n");
+
+    }else{
+        printf("No se encontro el archivo agenda.txt\n");
+    }
+
+    // CARGAR LOS TURNOS
+    archivo = fopen("turno.txt", "r");
+
+    if(archivo != NULL){
+        int id, dni, mutual, estado;
+        int dia, mes, anio, hora, min;
+        float monto;
+
+        // lee los datos de cada turno.
+        while(fscanf(archivo, "%d %d %f %d %d %d %d %d %d %d",
+            &id, &dni, &monto, &mutual, &estado, &dia, &mes, &anio, &hora, &min) == 10){
+
+            Turno t;
+            Fecha f;
+
+            // crea el turno y carga sus datos.
+            initTurno(&t);
+
+            setIdTurno(&t, id);
+            setDniPacienteTurno(&t, dni);
+            setMontoTurno(&t, monto);
+            setMutualTurno(&t, mutual);
+            setEstadoTurno(&t, estado);
+
+            // crea la fecha del turno.
+            f = creaFecha(dia, mes, hora, min, OCUPADO);
+            setFechaTurno(&t, f);
+
+            // marca la fecha como ocupada en la agenda.
+            if(id >= 0 && id < 390){
+                setDisponible(&agenda[id], OCUPADO);
+            }
+            // inserta el turno ordenado por fecha.
+            resetL(vo);
+
+            while(!isOol(*vo) &&
+                compararFechas(getFechaTurno(copyL(*vo)), f) < 0){
+
+                forwardL(vo);
+            }
+            insertL(vo, t);
+        }
+        fclose(archivo);
+        printf("Turnos cargados correctamente.\n");
+
+    }else{
+        printf("No se encontro el archivo turno.txt\n");
+    }
+
+    printf(" DATOS RESTAURADOS CORRECTAMENTE\n");
 }
 
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
