@@ -867,7 +867,7 @@ int main(){
         switch(d){
             case 1: gestionTurnos(&VO,agenda,&listaE); break;
             case 2: gestionPacientes(&VO, &listaE, agenda); break;
-            case 2: return 0;
+            case 3: return 0;
             break;
         }
 
