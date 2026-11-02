@@ -6,7 +6,8 @@
 #include "turno.h"
 #include "listaE_paciente.h"
 #include "listaVO_turno.h"
-
+#define minDNI 10000000
+#define maxDNI 99999999
 int esFeriado(Fecha f){
     int feriados[5][2]={ {9,11}, {23,11}, {7,12}, {8,12}, {25,12} };// FERIADOS CON FORMATO ( {DIA, MES} ).
     int n=5; // CANTIDAD DE FERIADOS
@@ -813,37 +814,37 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     return 1;
 }
 
-void gestionPacientes(Lista *VO, LPaciente *ListaE, Fecha agenda[]){
-int d=-1, dni;
-while (d!=0){
-        printf("---------------------- GESTION DE PACIENTES ----------------------\n");
-        printf(" 1. Cargar un paciente\n");
-        printf(" 2. Eliminar un paciente\n");
-        printf(" 3. Buscar un paciente por DNI \n");
-        printf(" 4. Mostrar todos los pacientes\n");
-        printf(" 0. Regresar\n>");
-        d=limite(0,4);
+int gestionPacientes(LPaciente *lp, LPaciente *listaE, Fecha agenda[]){
+    int d = -1, dni;
+    while(d != 0){
+        printf("==================== GESTI%cN DE PACIENTES ====================\n",224);
+        printf(" [1] Cargar un paciente\n");
+        printf(" [2] Eliminar un paciente\n");
+        printf(" [3] Buscar un paciente por n%mero de DNI\n",163);
+        printf(" [4] Mostrar todos los pacientes\n");
+        printf(" [0] Regresar\n");
+        printf("==============================================================\n>");
+        d = limite(0,4);
         switch(d){
-        case 1:
-            printf("%cN%cmero de DNI del paciente?\n", 168, 163);
-            dni=limite(10000000, 99999999);
-            if(uniquedni(*ListaE, dni)){
-                printf("Ya existe un paciente con ese DNI.\n");
-            }else{
-                cargaPaciente(ListaE, dni);
-            }
+            case 1: printf("%cN%cmero de DNI?\n>");
+                    dni = limite(minDNI, maxDNI);
+                    cargaPaciente(lp,dni);
             break;
-       // case 2: break;
-        case 3:
-            printf("%cN%cmero de DNI del paciente?\n", 168, 163);
-            dni=limite(10000000, 99999999);
-            mostrarPacientePorDNI(*ListaE, dni);
+            case 2: if(isEmpty(*lp)){
+                        printf("ERROR: No hay pacientes registrados.\n");
+                    }else{
+                        // la funcion enie...
+                    }
             break;
-
-        case 4: 
-            mostrarTodosPacientes(*ListaE); 
+            case 4: if(isEmpty(*lp)){
+                        printf("ERROR: No hay pacientes registrados.\n");
+                    }else{
+                        printf("%cN%cmero de DNI?\n>");
+                        dni = limite(minDNI, maxDNI);
+                        mostrarPacientePorDNI(*lp,dni);
+                    }
+            case 0: system("cls"); return 0;
             break;
-
         }
     }
 }
@@ -858,16 +859,23 @@ int main(){
     inicializarAgenda(agenda);
     //! MENU PRINCIPAL
     while(d != 0){
-        printf("---------------------- SISTEMA DE GESTION MEDICA ----------------------\n");
-        printf(" 1. Gesti%cn de turnos\n",162);
-        printf(" 2. Gesti%cn de pacientes\n",162);
-        //agregar opciones..
-        printf(" 0. Salir\n>");
-        d = limite(0,2);
+        printf("==================== SISTEMA DE GESTI%cN M%cDICA ====================\n",224,144);
+        printf(" [1] Gesti%cn de Turnos\n",162);
+        printf(" [2] Gesti%cn de Pacientes\n",162);
+        printf(" [3] Consultas de Agenda\n");
+        printf(" [4] Estad%csticas y Reporte\n",161);
+        printf(" [5] Archivos y Backup (copia de seguridad)\n");
+        printf(" [0] Salir\n");
+        printf("===================================================================\n>");
+        d = limite(0,5);
         switch(d){
-            case 1: gestionTurnos(&VO,agenda,&listaE); break;
-            case 2: gestionPacientes(&VO, &listaE, agenda); break;
-            case 3: return 0;
+            case 1: system("cls");
+                    gestionTurnos(&VO,agenda,&listaE);
+            break;
+            case 2: system("cls");
+                    gestionPacientes(&listaE);
+            break;
+            case 0: printf("%cGracias por utilizar nuestro programa!\n",173);return 0;
             break;
         }
 
