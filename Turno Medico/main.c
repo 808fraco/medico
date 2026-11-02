@@ -843,6 +843,7 @@ int gestionPacientes(LPaciente *lp, Lista *VO, Fecha agenda[]){
                         dni = limite(minDNI, maxDNI);
                         mostrarPacientePorDNI(*lp,dni);
                     }
+            break;
             case 0: system("cls"); return 0;
             break;
         }
