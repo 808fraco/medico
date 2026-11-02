@@ -814,7 +814,7 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     return 1;
 }
 
-int gestionPacientes(LPaciente *lp, LPaciente *listaE, Fecha agenda[]){
+int gestionPacientes(LPaciente *lp, Lista *listaE, Fecha agenda[]){
     int d = -1, dni;
     while(d != 0){
         printf("==================== GESTI%cN DE PACIENTES ====================\n",224);
