@@ -149,17 +149,6 @@ void mostrarPaciente(Paciente p){
     free(nom);
     free(ape);
 }
-//! REV
-void mostrarFechaPorPagina(Fecha agenda[]){
-    int libres[390];
-    int cantLibres = 0,i;
-    for(i=0;i<390;i++){
-        if(getDisponible(agenda[i]) == LIBRE){
-            libres[i] = cantLibres;
-            cantLibres++;
-        }
-    }
-}
 
 int fechaLibreEnAgenda(Fecha agenda[], int dia, int mes);
 void cargaPaciente(LPaciente *lp, int dni);
@@ -680,6 +669,91 @@ if (contadorTurnos>0){
     }
 return totalIngresado;
 }
+//! s)
+void backup(Lista l, LPaciente lp, Fecha agenda[]){
+    FILE *archivo;
+    Turno t;
+    Fecha f;
+    Paciente p;
+    int i;
+
+    archivo = fopen("turno.txt", "w");  // guarda los turnos en turno.txt
+
+    if(archivo == NULL){
+        printf("ERROR: No se pudo crear el archivo turno.txt\n");
+        return;
+    }
+    resetL(&l); // vuelve al inicio de la lista de turnos.
+
+    while(!isOol(l)){ // recorre todos los turnos.
+        t = copyL(l);
+        f = getFechaTurno(t); // obtiene su fecha.
+        // guarda los datos del turno.
+        fprintf(archivo, "%d %d %.2f %d %d %d %d %d %d %d\n",
+            getIdTurno(t),
+            getDniPacienteTurno(t),
+            getMontoTurno(t),
+            getMutualTurno(t),
+            getEstadoTurno(t),
+            getDia(f),
+            getMes(f),
+            getAnio(f),
+            getHora(f),
+            getMinuto(f));
+
+        forwardL(&l); // avanza al siguiente turno.
+    }
+
+    fclose(archivo);
+
+    archivo = fopen("pacientes.txt", "w"); //guarda los pacientes en pacientes.txt
+
+    if(archivo == NULL){
+        printf("ERROR: No se pudo crear el archivo pacientes.txt\n");
+        return;
+    }
+    reset(&lp); // vuelve al inicio de la lista de pacientes.
+
+    while(!isOos(lp)){ // recorre todos los pacientes.
+        p = copy(lp);
+
+        char *nom = getNombre(p);
+        char *ape = getApellido(p);
+
+        // guarda los datos del paciente.
+        fprintf(archivo, "%s %s %d %d\n", nom, ape, getDNI(p), getOSocial(p));
+        free(nom);
+        free(ape);
+
+        forwards(&lp); // avanza al siguiente paciente.
+    }
+    fclose(archivo);
+
+    archivo = fopen("agenda.txt", "w"); // guarda la agenda en agenda.txt
+
+    if(archivo == NULL){
+        printf("ERROR: No se pudo crear el archivo agenda.txt\n");
+        return;
+    }
+
+    for(i = 0; i < 390; i++){ // recorre las 390 posiciones de la agenda.
+        f = agenda[i];
+
+        // guarda los datos de cada fecha.
+        fprintf(archivo, "%d %d %d %d %d %d\n",
+            getDia(f),
+            getMes(f),
+            getAnio(f),
+            getHora(f),
+            getMinuto(f),
+            getDisponible(f));
+    }
+
+    fclose(archivo);
+
+    printf("BACKUP REALIZADO CORRECTAMENTE\n");
+}
+
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
 int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     int d,c, dia,mes;
