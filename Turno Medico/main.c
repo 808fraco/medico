@@ -71,13 +71,13 @@ int limite(int limInf, int limSup){
         do{
             d = scanf("%d", &n);
             while(getchar() != '\n');
-            while(n < limInf || n > limSup || d == 0){
+            while(n < limInf || n > limSup || d == 0){ // si el numero ingresado es menor al limite inferior o mayor al limite superior, o d es igual a 0(el dato ingresado no coincide con lo qpide el programa)
                 printf("ERROR: Entrada invalida. Digite el dato correctamente.\n>");
                 d = scanf("%d", &n);
                 while(getchar() != '\n');
             }
-        }while(d != 1);
-        return n;
+        }while(d != 1); // si el scanf devuelve 1 a la variable d, sale del while
+        return n; // retorna el numero deseado
 }
 int uniquedni(LPaciente p, int dni){
     Paciente aux; // paciente auxiliar que va actualizando durante el while
