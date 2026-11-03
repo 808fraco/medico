@@ -648,11 +648,10 @@ void inicializarAgenda(Fecha agenda[]){
                     pos++;
                     }
                 }
-             }
-          }
-       }
-    }
- }
+            }
+        }
+     }
+  }
 //! p)
 void mostrarPacientePorDNI(LPaciente lp, int dni){
     Paciente auxi;
