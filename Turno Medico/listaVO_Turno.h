@@ -46,7 +46,7 @@ int isOol(Lista l){
 //! Funciones de cursores (reset, forward)
 void resetL(Lista *l){
     l->cursor = l->acceso; // mueve el cursor al acceso (primer nodo)
-    l->aux = l->acceso; // lo mismo
+    l->aux = l->acceso; // lo mismo para el auxiliar
 }
 
 void forwardL(Lista *l){
@@ -54,7 +54,7 @@ void forwardL(Lista *l){
     l->cursor = l->cursor->siguiente; // el cursor avanza al siguiente nodo
 }
 //! copy, insert y supress
-Turno copyL(Lista l){
+Turno copyL(Lista l){ // copia el vipd donde esta apuntando el cursor
     return l.cursor->vipd;
 }
 
@@ -66,11 +66,11 @@ void insertL(Lista *l, Turno elem){
     }else{
         n->vipd = elem; //guarda el elemento dentro del nodo
         n->siguiente = l->cursor; //engancha el nuevo nodo al siguiente nodo donde apunta cursor
-        if(l->aux == l->cursor){ //insertamos al inicio si esta vacia
+        if(l->aux == l->cursor){ //insertamos al inicio de la lista
             l->acceso = n;
             l->cursor=l->acceso;
             l->aux=l->acceso;
-        }else { //insertamos en el medio o al final. Hacemos que el siguiente nodo del auxiliar, apunte a n
+        }else { //insertamos en el medio o al final. 
             l->aux->siguiente = n;
             l->cursor=n;
         }
@@ -78,14 +78,14 @@ void insertL(Lista *l, Turno elem){
 }
 
 void supressL(Lista *l){
-    if(l->aux == l->cursor){ // si el auxiliar de la lista apunta a nada
-        l->acceso = l->cursor->siguiente; // entonces el acceso pasa a apuntar al nodo siguiente
+    if(l->aux == l->cursor){ // elimina el primer nodo de la lista cuando el cursor este apuntando al acceso
+        l->acceso = l->cursor->siguiente; // entonces el acceso pasa al nodo siguiente
         free(l->cursor);
         l->cursor=l->acceso;
         l->aux=l->acceso;
 
-    }else { // y sino, si el auxiliar es distinto a null (al menos un nodo adentro de la lista)
-        l->aux->siguiente = l->cursor->siguiente; // el auxiliar pasara a valer el siguiente del nodo borrado
+    }else { // y sino, eliminar en el medio o al final de la lista
+        l->aux->siguiente = l->cursor->siguiente; // y engancha el nodo anterior con el posterior al borrado
         free(l->cursor);
         l->cursor=l->aux->siguiente;
     }
