@@ -626,26 +626,27 @@ void eliminarPaciente(LPaciente *lp, Lista VO){
 }
 //! o)
 void inicializarAgenda(Fecha agenda[]){
-    int pos = 0;
+    int pos = 0; // indica la posicion del arreglo donde se guardara cada horario.
     int mes, dia, hora, min;
 
     // Bucle principal de meses
     for(mes = 11; mes <= 12; mes++){
-        int max_dias = (mes == 11) ? 30 : 31; // Se calcula dentro del bucle
+        int max_dias = (mes == 11) ? 30 : 31; // se calcula dentro del bucle
 
         for (dia = 1; dia <= max_dias; dia++){
+            // se crea una fecha auxiliar para comprobar si el dia es habil o feriado.
             Fecha f_prueba = creaFecha(dia, mes, 8, 0, LIBRE);
             if(esFeriado(f_prueba)){
-                continue;
+                continue; // si es feriado, pasa al siguiente dia.
             }
             if (!esDiaHabil(f_prueba)){
-                continue;
+                continue; // si no es dia habil (sabado o domingo), pasa al siguiente dia.
             }
             for(hora = 8; hora < 13; hora++){
                 for(min = 0; min <= 30; min += 30){
-                    if (pos<390){
+                    if (pos<390){ // comprueba que no se supere la capacidad del arreglo.
                     agenda[pos] = creaFecha(dia, mes, hora, min, LIBRE);
-                    pos++;
+                    pos++; // avanza a la siguiente posicion del arreglo.
                     }
                 }
             }
