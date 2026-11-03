@@ -316,18 +316,11 @@ init(&p);
 printf("Ingrese el ID del turno a confirmar:\n>");
 id = limite(0,389);
 
-resetL(vo);
-while(!isOol(*vo)){
-    t=copyL(*vo);
-    if(getIdTurno(t)==id){
-        break;
-    }
-    forwardL(vo);
-    }
-    if(isOol(*vo)){
-        printf("ERROR: El ID del turno ingresado no se encuentra registrado: %d\n", id);
-        return 0;
-    }
+if(!buscarTurnoPorID(vo, id)){
+    printf("ERROR: El ID del turno ingresado no se encuentra registrado: %d\n", id);
+    return 0;
+}
+t=copyL(*vo);
     if(getEstadoTurno(t) != SOLICITADO){ //Controla que el turno se encuentre solicitado
         printf("ERROR: El turno no se encuentra solicitado.\n");
         return 0;
