@@ -136,6 +136,20 @@ void mostrarUnTurno(Turno t){
         case 4:printf("Estado: CANCELADO.\n");break;
     }
 }
+int contarTurnosPaciente(Lista l, int dni){
+    Turno t;
+    initTurno(&t);
+    int c = 0;
+    resetL(&l);
+    while(!isOol(l)){
+        t = copyL(l);
+        if(getDniPacienteTurno(t) == dni){
+            c++;
+        }
+        forwardL(&l);
+    }
+    return c;
+}
 void mostrarPaciente(Paciente p){
     char *nom=getNombre(p);
     char *ape=getApellido(p);
@@ -577,6 +591,48 @@ void cargaPaciente(LPaciente *lp, int dni){
         insert(lp,p);
     }
 }
+//! ñ)
+void eliminarPaciente(LPaciente *lp, Lista VO){
+    Paciente p;
+    Turno t;
+    init(&p);
+    initTurno(&t);
+    int o,e=0, dniST; // e = encontrado, dniST = dni sin turno
+    printf("%cN%cmero de DNI del paciente a eleminar?\n>",168,163);
+    dniST = limite(minDNI,maxDNI);
+    reset(lp);
+    while(!isOos(*lp) && !e){
+        p = copy(*lp);
+        if(getDNI(p) == dniST){
+            e=1;
+        }else{
+            forwards(lp);
+        }
+    }
+    if(!e){
+        printf("ERROR: No existe un paciente con ese n%cmero de DNI.\n",163);
+        return;
+    }
+    if(contarTurnosPaciente(VO,dniST) > 0){
+        printf("ERROR: El paciente tiene turnos registrados y no se puede eliminar.\n");
+        return;
+    }
+    if(isOos(*lp)){
+        printf("ERROR: El n%cmero de DNI ingresado no est%c registrado en el sistema.\n",163,160);
+        return;
+    }
+    printf("DATOS DEL PACIENTE SIN TURNO:\n");
+    mostrarPaciente(p);
+    printf("%cDesea eliminar este registro del sistema?\n[1. Si | 0. No]\n>");
+    o = limite(0,1);
+    if(o==1){
+        supress(lp);
+        printf("%cRegistro eliminado con exito!\n");
+        return;
+    }
+    printf("No se elimino el registro.\n");
+    return;
+}
 //! o)
 void inicializarAgenda(Fecha agenda[]){
     int pos = 0;
@@ -606,51 +662,6 @@ void inicializarAgenda(Fecha agenda[]){
             }
         }
     }
-}
-//! ñ)
-void eliminarPaciente(LPaciente *lp, Lista VO){
-    Paciente p;
-    Turno t;
-    init(&p);
-    initTurno(&t);
-    int o, dniST;
-    if(isEmpty(*lp)){
-        printf("ERROR: No hay pacientes para eliminar\n");
-        return;
-    }
-    reset(lp);
-    while(!isOos(*lp)){
-        resetL(&VO);
-        p = copy(*lp);
-        dniST = getDNI(p);
-        while(!isOol(VO)){
-            t = copyL(VO);
-            if(dniST == getDniPacienteTurno(t)){
-                break;
-            }
-            forwardL(&VO);
-        }
-        if(isOol(VO)){
-                printf("DATOS DEL PACIENTE QUE NO TIENE TURNO: \n");
-                mostrarPaciente(p);
-                printf("%cDesea eliminar este registro del sistema?\n",168);
-                printf("[1. Si | 0. No]\n");
-                o = limite(0,1);
-                if(o==1){
-                    supress(lp);
-                    printf("%cRegistro eliminado con exito!\n",173);
-                    return;
-                }else{
-                    printf("No se elimino el registro.\n");
-                    return;
-                }
-        }
-        forwards(lp);
-    }
-    if(isOos(*lp)){
-        printf("ERROR: No se encontro ningun paciente sin turno.\n");
-    }
-    return;
 }
 //! p)
 void mostrarPacientePorDNI(LPaciente lp, int dni){
