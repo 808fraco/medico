@@ -958,12 +958,12 @@ int gestionTurnos(Lista *VO, Fecha agenda[], LPaciente *listaE){
     Fecha f;
     initFecha(&f);
     while(d != 0){
-        printf("---------------------- GESTION DE TURNOS ----------------------\n");
-        printf(" 1. Solicitar un turno\n");
-        printf(" 2. Confirmar un turno\n");
-        printf(" 3. Cancelar un turno \n");
-        printf(" 4. Mostrar el proximo paciente\n");
-        printf(" 0. Regresar\n>");
+        printf("==================== GESTI%cN DE TURNOS ====================\n",224);
+        printf(" [1] Solicitar un turno\n");
+        printf(" [2] Confirmar un turno\n");
+        printf(" [3] Cancelar un turno \n");
+        printf(" [4] Mostrar el proximo paciente\n");
+        printf(" [0] Regresar\n>");
         d = limite(0,4);
         switch(d){
             case 1: solicitarUnTurno(VO,listaE,agenda); return 1;
@@ -1018,8 +1018,7 @@ void gestionPacientes(LPaciente *lp, Lista VO){
         printf(" [2] Eliminar un paciente\n");
         printf(" [3] Buscar un paciente por n%cmero de DNI\n",163);
         printf(" [4] Mostrar todos los pacientes\n");
-        printf(" [0] Regresar\n");
-        printf("==============================================================\n>");
+        printf(" [0] Regresar\n>");
         d = limite(0,4);
         switch(d){
             case 1:
