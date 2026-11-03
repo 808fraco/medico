@@ -136,7 +136,7 @@ void mostrarUnTurno(Turno t){
         case 4:printf("Estado: CANCELADO.\n");break;
     }
 }
-int contarTurnosPaciente(Lista l, int dni){
+int contarTurnosPaciente(Lista l, int dni){ // cuenta cuantos turnos tiene un paciente dentro de la lista de turnos
     Turno t;
     initTurno(&t);
     int c = 0;
