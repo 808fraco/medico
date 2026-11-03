@@ -612,11 +612,11 @@ void eliminarPaciente(LPaciente *lp, Lista VO){
     }
     printf("DATOS DEL PACIENTE SIN TURNO:\n");
     mostrarPaciente(p);
-    printf("%cDesea eliminar este registro del sistema?\n[1. Si | 0. No]\n>");
+    printf("%cDesea eliminar este registro del sistema?\n[1. Si | 0. No]\n>",168);
     o = limite(0,1);
     if(o==1){
         supress(lp);
-        printf("%cRegistro eliminado con exito!\n");
+        printf("%cRegistro eliminado con exito!\n",173);
         return;
     }
     printf("No se elimin%c el registro.\n",162);
