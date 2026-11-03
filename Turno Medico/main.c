@@ -168,11 +168,11 @@ int eliminarTurnosCancelados(Lista *t);
 void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     int dni, opcion, id, dia, mes, haylibres;
     Turno t;
-    printf("Ingrese el n%cmero de DNI del paciente:\n>",163); // pedir DNI
+    printf("Numero de DNI del paciente:\n>"); // pedir DNI
     dni = limite(10000000,99999999);
 
-    if (!uniquedni(*l, dni)) { // verifica si existe
-        printf("El paciente no est%c registrado.\n",160);
+    if (!uniquedni(*l, dni)) { // si el DNI no existe en la lista de pacientes.
+        printf("El paciente no esta registrado.\n");
         printf("Desea cargarlo? (1: Si / 0: No):\n>");
         opcion = limite(0,1);
 
@@ -185,7 +185,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 
      // pide mes y dia hasta que haya horarios libres (0 en el mes para volver)
     do{
-        printf("Mes del turno [11 o 12 | 0. Para volver atr%cs]:\n>", 160);
+        printf("Mes del turno [11 o 12 | 0 para volver atr%cs]:\n>", 160);
         mes = limite(0,12);
         if(mes == 0){
             printf("Solicitud cancelada.\n");
@@ -195,9 +195,9 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
             printf("ERROR: Solo se atienden turnos en noviembre y diciembre.\n");
             haylibres = 0;
         }else{
-            printf("%cD%ca?:\n>",168,160);
+            printf("Dia:\n>");
             dia = limite(1, diaEnMes(mes));
-            haylibres = fechaLibreEnAgenda(agenda, dia, mes);
+            haylibres = fechaLibreEnAgenda(agenda, dia, mes); // Busca y muestra los horarios libres para el dia y mes elegidos.
         }
     }while(haylibres == 0);
 
@@ -206,7 +206,7 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
     id = limite(0,389);
 
      while (getDisponible(agenda[id]) != LIBRE || getDia(agenda[id]) != dia || getMes(agenda[id]) != mes) {
-        printf("ERROR: ID inv%clido o turno ocupado. Ingrese uno de la lista:\n>",160);
+        printf("ID invalido o turno ocupado. Ingrese uno de la lista:\n>");
         id = limite(0,389);
     }
     setDisponible(&agenda[id], OCUPADO); // ocupar fecha
@@ -219,24 +219,26 @@ void solicitarUnTurno(Lista *vo, LPaciente *l, Fecha agenda[]){
 
     resetL(vo);
 
-    while (!isOol(*vo) && compararFechas(getFechaTurno(copyL(*vo)), agenda[id]) < 0) { // compara la fecha actual del turno con la fecha del nuevo turno
+    // avanza mientras el cursor este dentro de la lista y la fecha del turno actual sea anterior a la nueva.
+    while (!isOol(*vo) && compararFechas(getFechaTurno(copyL(*vo)), agenda[id]) < 0) {
         forwardL(vo);
     }
 
     insertL(vo, t); // insertar ordenado
 
-    printf("\n%cTurno solicitado correctamente! ID: %d\n",173, id);
+    printf("\nTurno solicitado correctamente. ID: %d\n", id);
     printf("Fecha del turno asignado: ");
     mostrarFecha(agenda[id]);
 }
 //! b)
 int fechaLibreEnAgenda(Fecha agenda[], int dia, int mes){
-    int i,d=0;
+    int i,d=0;  //d indica si se encontro algun horario libre.
     for(i=0;i<390;i++){
+         // comprueba que coincidan el dia, el mes y que el horario este libre.
         if(getDia(agenda[i]) == dia && getMes(agenda[i]) == mes && getDisponible(agenda[i]) == LIBRE){
             printf("ID del turno: %d\n", i);
             mostrarFecha(agenda[i]);
-            d=1;
+            d=1;   // indica que se encontro al menos un horario libre.
         }
     }
     if(d==0){
@@ -516,19 +518,19 @@ void mostrarTodosTurnosPagina(Lista l, Fecha agenda[]){
 //! l)
 void mostrarTurnosMesRec(Lista l, Fecha agenda[], int mes){
 
-    if(isOol(l)){   // Si llega al final de la lista. Termina la funcion
+    if(isOol(l)){   // si el cursor esta fuera de la lista. termina
         return;
     }
     Turno t = copyL(l);
     Fecha f = getFechaTurno(t);
     int estado = getEstadoTurno(t);
 
-    // Verifica si pertenece al mes y esta solicitado o confirmado
+    // verifica si pertenece al mes y esta solicitado o confirmado
     if(getMes(f) == mes && (estado == SOLICITADO || estado == CONFIRMADO)){
 
         mostrarDatosTurno(t, agenda);
     }
-    // Avanza al siguiente turno
+    // avanza al siguiente turno
     forwardL(&l);
     mostrarTurnosMesRec(l, agenda, mes);
 }
@@ -536,14 +538,14 @@ void mostrarTurnosMesRec(Lista l, Fecha agenda[], int mes){
 int contarTurnosAtendidos(Lista l, int dia, int mes){
     int suma = 0;
 
-    if(isOol(l)){   // Si llega al final de la lista, termina
+    if(isOol(l)){   // si el cursor esta fuera de la lista.
         return 0;
     }
 
     Turno t = copyL(l);
     Fecha f = getFechaTurno(t);
 
-    // Verifica si el turno corresponde al dia, mes y esta atendido
+    // verifica si el turno corresponde al dia, mes y esta atendido
     if(getDia(f) == dia && getMes(f) == mes && getEstadoTurno(t) == ATENDIDO){
         suma = 1;
     }
@@ -726,12 +728,12 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
     archivo = fopen("turno.txt", "w");  // guarda los turnos en turno.txt
 
     if(archivo == NULL){
-        printf("ERROR: No se pudo crear el archivo %cturno.txt%c\n",34,34);
+        printf("ERROR: No se pudo crear el archivo turno.txt\n");
         return;
     }
     resetL(&l); // vuelve al inicio de la lista de turnos.
 
-    while(!isOol(l)){ // recorre todos los turnos.
+    while(!isOol(l)){
         t = copyL(l);
         f = getFechaTurno(t); // obtiene su fecha.
         // guarda los datos del turno.
@@ -755,7 +757,7 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
     archivo = fopen("pacientes.txt", "w"); //guarda los pacientes en pacientes.txt
 
     if(archivo == NULL){
-        printf("ERROR: No se pudo crear el archivo %cpacientes.txt%c\n",34,34);
+        printf("ERROR: No se pudo crear el archivo pacientes.txt\n");
         return;
     }
     reset(&lp); // vuelve al inicio de la lista de pacientes.
@@ -778,7 +780,7 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
     archivo = fopen("agenda.txt", "w"); // guarda la agenda en agenda.txt
 
     if(archivo == NULL){
-        printf("ERROR: No se pudo crear el archivo %cagenda.txt%c\n",34,34);
+        printf("ERROR: No se pudo crear el archivo agenda.txt\n");
         return;
     }
 
@@ -797,8 +799,9 @@ void backup(Lista l, LPaciente lp, Fecha agenda[]){
 
     fclose(archivo);
 
-    printf("%cBACKUP REALIZADO CORRECTAMENTE!\n",173);
+    printf("BACKUP REALIZADO CORRECTAMENTE\n");
 }
+
 //! t)
 void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
     FILE *archivo;
@@ -806,21 +809,21 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
     // comprueba que existan los tres archivos antes de tocar nada
     archivo = fopen("pacientes.txt", "r");
     if(archivo == NULL){
-        printf("ERROR: No se encontr%c %cpacientes.txt%c. No se carg%c nada.\n",162,34,34,162);
+        printf("No se encontro pacientes.txt. No se cargo nada.\n");
         return;
     }
     fclose(archivo);
 
     archivo = fopen("agenda.txt", "r");
     if(archivo == NULL){
-        printf("ERROR: No se encontr%c %cagenda.txt%c. No se carg%c nada.\n",162,34,34,162);
+        printf("No se encontro agenda.txt. No se cargo nada.\n");
         return;
     }
     fclose(archivo);
 
     archivo = fopen("turno.txt", "r");
     if(archivo == NULL){
-        printf("ERROR: No se encontr%c %cturno.txt%c. No se carg%c nada.\n",162,34,34,162);
+        printf("No se encontro turno.txt. No se cargo nada.\n");
         return;
     }
     fclose(archivo);
@@ -870,7 +873,7 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
         printf("Pacientes cargados correctamente.\n");
 
     }else{
-        printf("ERROR: No se encontr%c el archivo %cpacientes.txt%c\n",162,34,34);
+        printf("No se encontro el archivo pacientes.txt\n");
     }
     // CARGAR LA AGENDA
     archivo = fopen("agenda.txt", "r");
@@ -891,7 +894,7 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
         printf("Agenda cargada correctamente.\n");
 
     }else{
-        printf("ERROR: No se encontr%c el archivo %cagenda.txt%c\n",162,34,34);
+        printf("No se encontro el archivo agenda.txt\n");
     }
 
     // CARGAR LOS TURNOS
@@ -938,11 +941,12 @@ void cargarBackup(Lista *vo, LPaciente *lp, Fecha agenda[]){
         printf("Turnos cargados correctamente.\n");
 
     }else{
-        printf("ERROR: No se encontr%c el archivo %cturno.txt%c\n",162,34,34);
+        printf("No se encontro el archivo turno.txt\n");
     }
 
-    printf("%cDATOS RESTAURADOS CORRECTAMENTE!\n",173);
+    printf(" DATOS RESTAURADOS CORRECTAMENTE\n");
 }
+
 
 //! -------------------------------------------------------------------------------- MENU DE OPCIONES --------------------------------------------------------------------------------
 // Gestion de turnos
