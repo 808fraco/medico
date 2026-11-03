@@ -70,7 +70,7 @@ int limite(int limInf, int limSup){
         int n,d = limInf-1; // n guarda el numero q se desea guardar | d es para el scanf (0 = el tipo de dato no coincide con el entero (%d)
         do{
             d = scanf("%d", &n);
-            while(getchar() != '\n');
+            while(getchar() != '\n'); // captura todo lo q esta adentro del buffer de entrada
             while(n < limInf || n > limSup || d == 0){ // si el numero ingresado es menor al limite inferior o mayor al limite superior, o d es igual a 0(el dato ingresado no coincide con lo qpide el programa)
                 printf("ERROR: Entrada invalida. Digite el dato correctamente.\n>");
                 d = scanf("%d", &n);
