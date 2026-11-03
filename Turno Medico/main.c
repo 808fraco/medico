@@ -584,12 +584,7 @@ void cargaPaciente(LPaciente *lp, int dni){
     setOSocial(&p,o);
 
     //! Insert en la lista
-    if(isEmpty(*lp)){ // Si esta vacia, insertar en el principio
-        insert(lp,p);
-    }else{ // sino, avanzar uno mas e insertar el paciente
-        forwards(lp);
-        insert(lp,p);
-    }
+    insert(lp,p);
 }
 //! ñ)
 void eliminarPaciente(LPaciente *lp, Lista VO){
