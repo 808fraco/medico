@@ -60,7 +60,7 @@ int esDiaHabil(Fecha f){
     return 0;
 }
 
-void mostrarFecha(Fecha f){
+void mostrarFecha(Fecha f){ //Formato dia/mes/año, hora/minuto e indica si esta "Libre" u "Ocupado".
     printf("%02d/%02d/%d %02d:%02d hs [%s]\n",
        getDia(f), getMes(f), getAnio(f), getHora(f), getMinuto(f),
        (getDisponible(f) == LIBRE) ? "Libre" : "Ocupado");
