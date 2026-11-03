@@ -641,19 +641,18 @@ void inicializarAgenda(Fecha agenda[]){
             if (!esDiaHabil(f_prueba)){
                 continue;
             }
-            if (esDiaHabil(f_prueba)|| !esFeriado(f_prueba)){
-                for(hora = 8; hora < 13; hora++){
-                    for(min = 0; min <= 30; min += 30){
-                        if (pos<390){
-                        agenda[pos] = creaFecha(dia, mes, hora, min, LIBRE);
-                        pos++;
-                        }
+            for(hora = 8; hora < 13; hora++){
+                for(min = 0; min <= 30; min += 30){
+                    if (pos<390){
+                    agenda[pos] = creaFecha(dia, mes, hora, min, LIBRE);
+                    pos++;
                     }
                 }
-            }
-        }
+             }
+          }
+       }
     }
-}
+ }
 //! p)
 void mostrarPacientePorDNI(LPaciente lp, int dni){
     Paciente auxi;
